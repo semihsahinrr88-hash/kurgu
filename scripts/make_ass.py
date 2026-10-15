@@ -14,6 +14,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 import render
 
 WHITE, ORANGE = r"\c&HFFFFFF&", r"\c&H1E8CFF&"   # ASS renk BGR: #FF8C1E turuncu
+# krem split paneli (varsayılan tema): altyazı panelin parçası olur -> koyu mürekkep, kontur yok, koyu turuncu
+INK, ORANGE_INK = r"\c&H1B1E22&", r"\c&H0A67D9&"   # #221E1B / #D9670A
+import os
+KREM = os.environ.get("STUDIO_THEME", "krem") != "lacivert"
 
 
 def ts(t):
@@ -59,11 +63,13 @@ def main():
             st = max(s0, ch[0]["start"]) - s0 + off
             en = min(s1, ch[-1]["end"]) - s0 + off
             parts = []
+            on_panel = KREM and r.get("layout") == "split" and not a.youtube
+            wc, oc = (INK, ORANGE_INK) if on_panel else (WHITE, ORANGE)
             for i, w in enumerate(ch):
                 t = w["text"].strip()
                 if i == len(ch) - 1:
                     t = t.rstrip(".,;:")
-                parts.append("{" + (ORANGE if is_key(t, hl) else WHITE) + "}" + t)
+                parts.append("{" + (oc if is_key(t, hl) else wc) + "}" + t)
             sty = "Split" if (r.get("layout") == "split" and not a.youtube) else "Semih"
             ev.append([st, max(en, st + 0.35), " ".join(parts), sty])
         off += s1 - s0
@@ -82,7 +88,7 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Semih,Montserrat ExtraBold,{a.size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,4,3,{al},{ml},{mr},{a.margin_v},1
-Style: Split,Montserrat ExtraBold,{int(a.size * 0.86)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,4,3,{al},{ml},{mr},{SPLIT_MV},1
+Style: Split,Montserrat ExtraBold,{int(a.size * 0.86)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,{'0,0' if KREM else '4,3'},{al},{ml},{mr},{SPLIT_MV},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

@@ -91,7 +91,7 @@ Tipler ve alanlar (ortak: `format` reels|youtube, `region` band|panel|full, `dur
 ### 4b. B-roll
 Kaynak: Semih'in verdiği ekran görüntüleri (TradingView, haber, tablo) veya `scene.py`. İnternetten telifli görsel/video indirme; yoksa planda "öneri" yaz ve iste. Görseli klibe çevir:
 ```bash
-ffmpeg -y -loop 1 -t 2.5 -i grafik.png -vf "scale=1080:1920:force_original_aspect_ratio=decrease:flags=bicubic,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=0x08142D,scale=w='trunc(1080*(1+0.05*t/2.5)/2)*2':h='trunc(1920*(1+0.05*t/2.5)/2)*2':eval=frame,crop=1080:1920,format=yuv420p" -r 30 -an edit/broll/b1.mp4
+ffmpeg -y -loop 1 -t 2.5 -i grafik.png -vf "scale=1080:1920:force_original_aspect_ratio=decrease:flags=bicubic,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=0xEFE8DB,scale=w='trunc(1080*(1+0.05*t/2.5)/2)*2':h='trunc(1920*(1+0.05*t/2.5)/2)*2':eval=frame,crop=1080:1920,format=yuv420p" -r 30 -an edit/broll/b1.mp4
 ```
 Opak overlay olarak ekle; 1.5-3 sn; ilgili cümleyle başlar.
 
@@ -144,6 +144,7 @@ Ten sıcaklığı korunur, tepe ışıklar `curves` ile yumuşakça kısılır (
 Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ikisi birlikte olur. Dikeyde kırpma %35'ten (yüz üstte); kafa kesiliyorsa zoom'u düşür.
 
 ## Semih'in kalıcı tercihleri
+- Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`).
 - Altyazı: beyaz Montserrat ExtraBold, normal harf, turuncu anahtar kelimeler, sola hizalı, ~2 satır, alt üçte bir; imza satırı ve "YENİ BÖLÜM" bandı yok.
 - Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Bronz ama parlamasız grade (§5). Kartlar yüzü kapatmaz.
 - Format modu her editte önce; efekt dozu moda göre; her efektin konuşmada nedeni var — anlamsız edit yok.

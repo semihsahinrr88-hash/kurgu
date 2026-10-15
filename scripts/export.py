@@ -12,7 +12,8 @@ Kapak (Reels): 1080x1920, başlık ızgara kırpmasında görünsün diye ORTA 1
 YouTube kapağı: 1280x720, sol yarıda başlık, sağda yüz.
 """
 from __future__ import annotations
-import argparse, re, subprocess
+import argparse, os, re, subprocess
+PAD = "0x08142D" if os.environ.get("STUDIO_THEME") == "lacivert" else "0xEFE8DB"
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
@@ -22,7 +23,7 @@ ACCENT, WHITE = (255, 140, 30), (255, 255, 255)
 
 
 def enc(src, out, w, h, fps=30):
-    vf = f"scale={w}:{h}:force_original_aspect_ratio=decrease:flags=lanczos,pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=0x08142D,fps={fps},format=yuv420p"
+    vf = f"scale={w}:{h}:force_original_aspect_ratio=decrease:flags=lanczos,pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color={PAD},fps={fps},format=yuv420p"
     subprocess.run(["ffmpeg", "-y", "-i", str(src), "-vf", vf, "-c:v", "libx264", "-profile:v", "high", "-preset", "slow",
                     "-crf", "17", "-maxrate", "12M" if h > w else "16M", "-bufsize", "24M", "-g", str(fps * 2),
                     "-c:a", "aac", "-b:a", "256k", "-ar", "48000", "-movflags", "+faststart", str(out)],

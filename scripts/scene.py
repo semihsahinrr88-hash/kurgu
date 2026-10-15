@@ -35,9 +35,21 @@ from pathlib import Path
 
 _B = Path(__file__).resolve().parent
 PKG = _B if (_B / "fonts").exists() else _B.parent   # ~/studio/ veya paket kökü
-C = dict(bg="#08142D", card="rgba(8,20,45,0.92)", card_solid="#0E1F42", stripe="#2F80FF",
-         accent="#FF8C1E", up="#2BD47D", down="#FF5A5F", text="#FFFFFF", muted="#A9B4C8",
-         dim="#6B7894", hair="rgba(255,255,255,0.10)", grid="rgba(47,128,255,0.07)", scrim="rgba(0,0,0,0.55)")
+THEMES = {
+    # krem (varsayılan, 15.10.2026): konuşanın kazak/duvar tonundan; panel videoyla tek parça görünür.
+    "krem": dict(bg="#EFE8DB", card="rgba(239,232,219,0.95)", card_solid="#E6DDCC", stripe="#FF8C1E",
+                 accent="#FF8C1E", accent_ink="#D9670A", up="#1E9E5A", down="#D9434A", text="#221E1B",
+                 muted="#6F6458", dim="#9A8E80", hair="#CFC4B3", grid="transparent", scrim="rgba(0,0,0,0.55)",
+                 track="rgba(34,30,27,0.10)", shadow="0 18px 44px rgba(40,30,20,.22)", light=True),
+    # lacivert (eski): STUDIO_THEME=lacivert ya da spec "theme": "lacivert"
+    "lacivert": dict(bg="#08142D", card="rgba(8,20,45,0.92)", card_solid="#0E1F42", stripe="#2F80FF",
+                     accent="#FF8C1E", accent_ink="#FF8C1E", up="#2BD47D", down="#FF5A5F", text="#FFFFFF",
+                     muted="#A9B4C8", dim="#6B7894", hair="rgba(255,255,255,0.10)", grid="rgba(47,128,255,0.07)",
+                     scrim="rgba(0,0,0,0.55)", track="rgba(255,255,255,.08)", shadow="0 24px 60px rgba(0,0,0,.35)",
+                     light=False),
+}
+import os
+C = dict(THEMES[os.environ.get("STUDIO_THEME", "krem")])
 
 
 def tr_num(v: float, decimals: int = 0) -> str:
@@ -61,6 +73,7 @@ def region_rect(fmt, region):
 
 
 def build(spec: dict) -> str:
+    C.clear(); C.update(THEMES[spec.get("theme", os.environ.get("STUDIO_THEME", "krem"))])
     fmt = spec.get("format", "reels")
     region = spec.get("region", "band")
     typ = spec["type"]
@@ -71,7 +84,9 @@ def build(spec: dict) -> str:
     W, H, (rx, ry, rw, rh), filled = region_rect(fmt, region)
     k = 1.0 if fmt == "reels" else 0.78
     bg = "transparent"
-    if filled and typ != "question":
+    if filled and typ != "question" and C["light"]:
+        bg = C["bg"]
+    elif filled and typ != "question":
         bg = f"{C['bg']}; background-image: linear-gradient({C['grid']} 2px, transparent 2px), linear-gradient(90deg, {C['grid']} 2px, transparent 2px); background-size: 60px 60px"
     if typ == "question":
         bg = C["scrim"]
@@ -123,7 +138,7 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
         for i, t in enumerate(at):
             t = float(t)
             js += f"tl.fromTo('#i{i}',{{opacity:0,x:-24}},{{opacity:1,x:0,duration:0.35,ease:'power3.out'}},{max(0.3, t - 0.2):.3f});\n"
-            js += f"tl.to('#i{i}',{{color:'{C['accent']}',duration:0.2}},{t:.3f});\n"
+            js += f"tl.to('#i{i}',{{color:'{C['accent_ink']}',duration:0.2}},{t:.3f});\n"
             if i:
                 js += f"tl.to('#i{i-1}',{{color:'{C['muted']}',duration:0.2}},{t:.3f});\n"
             if typ == "timeline":
@@ -162,7 +177,14 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
     else:
         raise SystemExit(f"bilinmeyen sahne tipi: {typ}")
 
-    if spec.get("step"):  # numaralı madde rozeti: "3/6" -> kartın en üstünde turuncu
+    ed = C["light"] and region in ("panel", "full") and typ != "question"
+    if spec.get("step") and ed:  # krem panel: dev turuncu numara solda, "4 / 6" etiketi içerikte
+        a_, _, b_ = str(spec["step"]).partition("/")
+        lab = f'<div class="eb steplab">{html.escape(a_.strip())} / {html.escape(b_.strip())}</div>' if b_ else ""
+        body = re.sub(r'(<div class="card[^"]*" id="card">)', lambda m: m.group(1) + lab, body, count=1)
+        body = f'<div class="bign" id="step">{html.escape(a_.strip())}</div>' + body
+        js = f"tl.fromTo('#step',{{opacity:0,y:30}},{{opacity:1,y:0,duration:0.45,ease:'power3.out'}},0.12);\n" + js
+    elif spec.get("step"):  # numaralı madde rozeti: "3/6" -> kartın en üstünde turuncu
         a_, _, b_ = str(spec["step"]).partition("/")
         badge = f'<div class="step" id="step">{html.escape(a_)}<span>/{html.escape(b_)}</span></div>' if b_ else f'<div class="step" id="step">{html.escape(a_)}</div>'
         body = re.sub(r'(<div class="card[^"]*" id="card">)', lambda m: m.group(1) + badge, body, count=1)
@@ -182,7 +204,7 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
 html,body{{margin:0;background:transparent;}}
 #stage{{position:relative;width:{W}px;height:{H}px;overflow:hidden;background:{stage_bg};font-family:'Montserrat',sans-serif;color:{C['text']};}}
 #region{{position:absolute;left:{rx}px;top:{ry}px;width:{rw}px;height:{rh}px;box-sizing:border-box;padding-bottom:{220 if (region == 'panel' and fmt == 'reels') else 0}px;display:flex;flex-direction:column;justify-content:{center};align-items:{'center' if region != 'band' else 'stretch'};background:{region_bg};}}
-.card{{box-sizing:border-box;background:{C['card']};border-left:14px solid {C['stripe']};border-radius:28px;padding:{px(44)} {px(52)};box-shadow:0 24px 60px rgba(0,0,0,.35);width:{'100%' if region == 'band' else '86%'};}}
+.card{{box-sizing:border-box;background:{C['card']};border-left:14px solid {C['stripe']};border-radius:28px;padding:{px(44)} {px(52)};box-shadow:{C['shadow']};width:{'100%' if region == 'band' else '86%'};}}
 .card.wide{{width:{'100%' if region == 'band' else '92%'};}}
 .eb,.src{{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:{px(30)};color:{C['muted']};letter-spacing:.02em;}}
 .eb{{margin-bottom:{px(14)};}} .src{{margin-top:{px(18)};font-size:{px(24)};color:{C['dim']};}}
@@ -190,14 +212,14 @@ html,body{{margin:0;background:transparent;}}
 .stat{{font-weight:900;font-size:{px(168)};line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums;display:inline-block;}}
 .pre,.suf{{font-weight:800;font-size:{px(110)};}} .unit{{font-weight:700;font-size:{px(64)};color:{C['muted']};margin-left:{px(8)};}}
 .label{{font-weight:700;font-size:{px(42)};color:{C['muted']};margin-top:{px(8)};}}
-.track{{height:{px(20)};border-radius:10px;background:rgba(255,255,255,.08);margin-top:{px(22)};overflow:hidden;}} .fill{{height:100%;width:0;background:{C['accent']};border-radius:10px;}}
+.track{{height:{px(20)};border-radius:10px;background:{C['track']};margin-top:{px(22)};overflow:hidden;}} .fill{{height:100%;width:0;background:{C['accent']};border-radius:10px;}}
 .cmp{{display:flex;align-items:center;gap:{px(28)};font-weight:900;letter-spacing:-.03em;white-space:nowrap;}}
 .old{{position:relative;color:{C['text']};}} .old i{{position:absolute;left:-4%;right:-4%;top:52%;height:{px(12)};background:{C['down']};transform-origin:left;transform:scaleX(0);border-radius:6px;}}
-.arrow{{color:{C['dim']};font-weight:700;font-size:{px(90)};}} .new{{color:{C['accent']};opacity:0;}}
-.chip{{display:inline-block;margin-top:{px(18)};padding:{px(10)} {px(24)};border-radius:999px;background:{C['accent']}2E;color:{C['accent']};font-weight:800;font-size:{px(40)};opacity:0;}}
+.arrow{{color:{C['dim']};font-weight:700;font-size:{px(90)};}} .new{{color:{C['accent_ink']};opacity:0;}}
+.chip{{display:inline-block;margin-top:{px(18)};padding:{px(10)} {px(24)};border-radius:999px;background:{C['accent']}2E;color:{C['accent_ink']};font-weight:800;font-size:{px(40)};opacity:0;}}
 .h1{{font-weight:900;font-size:{px(104)};line-height:1.04;letter-spacing:-.02em;}}
 .h2{{font-weight:800;font-size:{px(66)};line-height:1.1;letter-spacing:-.01em;margin-bottom:{px(12)};}}
-.acc{{color:{C['accent']};}}
+.acc{{color:{C['accent_ink']};}}
 .list{{list-style:none;margin:{px(10)} 0 0;padding:0;}} .list li{{display:flex;gap:{px(22)};font-weight:700;font-size:{px(54)};line-height:1.2;padding:{px(14)} 0;opacity:0;}}
 .ck{{color:{C['stripe']};font-weight:900;}}
 .tl{{position:relative;display:flex;justify-content:space-between;margin-top:{px(40)};padding-top:{px(20)};}}
@@ -207,14 +229,21 @@ html,body{{margin:0;background:transparent;}}
 .yr{{font-weight:900;font-size:{px(48)};margin-top:{px(14)};}} .pt-t{{font-weight:600;font-size:{px(32)};color:{C['muted']};text-align:center;margin-top:{px(6)};}}
 .tick{{display:flex;align-items:center;gap:{px(26)};white-space:nowrap;}} .code{{font-weight:900;font-size:{px(96)};}} .price{{font-weight:700;font-size:{px(64)};color:{C['muted']};}}
 .chg{{font-weight:800;font-size:{px(52)};padding:{px(8)} {px(22)};border-radius:999px;}}
-.qwrap{{box-sizing:border-box;width:100%;padding:0 {px(80)};margin-top:{'-'+px(240) if fmt == 'reels' else '0'};}}
-.cta{{margin-top:{px(18)};font-weight:800;font-size:{px(52)};color:{C['accent']};}}
-.term{{background:{C['card_solid']};font-family:'JetBrains Mono',monospace;}} .tl-line{{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:{px(44)};line-height:1.5;opacity:0;white-space:pre-wrap;}} .pr{{color:{C['accent']};}}
+.qwrap{{box-sizing:border-box;width:100%;color:#FFFFFF;padding:0 {px(80)};margin-top:{'-'+px(240) if fmt == 'reels' else '0'};}}
+.cta{{margin-top:{px(18)};font-weight:800;font-size:{px(52)};color:{C['accent_ink']};}}
+.term{{background:{C['card_solid']};font-family:'JetBrains Mono',monospace;}} .tl-line{{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:{px(44)};line-height:1.5;opacity:0;white-space:pre-wrap;}} .pr{{color:{C['accent_ink']};}}
 .step{{font-weight:900;font-size:{px(84)};line-height:1;color:{C['accent']};letter-spacing:-.02em;margin-bottom:{px(10)};}} .step span{{font-size:{px(44)};color:{C['dim']};font-weight:800;}}
+#region.ed{{padding-left:{px(80)};padding-right:{px(80)};align-items:flex-start;}}
+#region.ed .card{{background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;width:100%;}}
+#region.edstep{{flex-direction:row;align-items:center;justify-content:flex-start;gap:{px(44)};padding-left:{px(56)};}}
+#region.edstep .card{{flex:1;width:auto;min-width:0;}}
+.bign{{font-weight:900;font-size:{px(470)};line-height:.78;letter-spacing:-.04em;color:{C['accent']};flex:none;margin-top:-{px(20)};}}
+.steplab{{color:{C['muted']};border-bottom:3px solid {C['hair']};padding-bottom:{px(14)};margin-bottom:{px(22)} !important;}}
+#region.ed::after{{content:"";position:absolute;left:0;right:0;top:100%;height:{px(150)};background:linear-gradient({C['bg']},{C['bg']}00);pointer-events:none;}}
 .qm{{font-weight:900;font-size:{px(160)};line-height:.6;color:{C['accent']};height:{px(70)};}}
 </style></head><body>
 <div id="stage" data-composition-id="main" data-start="0" data-duration="{dur}" data-width="{W}" data-height="{H}">
- <div id="region" class="clip" data-start="0" data-duration="{dur}" data-track-index="0">{body}</div>
+ <div id="region" class="clip{' ed' if ed else ''}{' edstep' if (ed and spec.get('step')) else ''}" data-start="0" data-duration="{dur}" data-track-index="0">{body}</div>
 </div>
 <script src="gsap.min.js"></script>
 <script>

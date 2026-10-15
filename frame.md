@@ -2,13 +2,34 @@
 version: 1
 name: BorsaSemih — Frame
 description: >
-  BorsaSemih Reels/YouTube görsel sistemi. Koyu lacivert zemin, beyaz metin, TEK vurgu rengi turuncu
+  BorsaSemih Reels/YouTube görsel sistemi. VARSAYILAN TEMA "krem" (15.10.2026, Semih onaylı): panel/kart zemini
+  konuşanın kazak/duvar tonundan krem, koyu mürekkep metin; videoyla tek parça görünür. Eski tema "lacivert"
+  (STUDIO_THEME=lacivert ya da spec "theme": "lacivert") aşağıdaki colors bloğunda. TEK vurgu rengi turuncu
   (#FF8C1E, altyazıyla aynı). Yeşil/kırmızı sadece artış/düşüş için. Montserrat (başlık, rakam, gövde)
   + JetBrains Mono (küçük gri üst etiket / kaynak satırı). Tamamı büyük harf YOK — her yerde cümle düzeni.
 unit: 1080×1920 (Reels, birincil) · 1920×1080 (YouTube)
 principle: atomlar kutsal · yerleşim serbest · rakamlar konuşmadan ve kaynaktan gelir
 
-colors:
+theme-krem:                 # varsayılan — scene.py THEMES["krem"], patch_zoom/export/make_ass aynı değerleri kullanır
+  bg: "#EFE8DB"              # split/pip paneli, tam ekran zemin, B-roll dolgusu (ffmpeg: 0xEFE8DB)
+  card: "rgba(239,232,219,0.95)"   # band kartı (başın üstü)
+  card-solid: "#E6DDCC"      # terminal
+  stripe: "#FF8C1E"          # band kartının sol şeridi, pip çerçevesi
+  accent: "#FF8C1E"          # dev numara, şerit, bar — büyük yüzeyler
+  accent-ink: "#D9670A"      # krem üstünde KÜÇÜK turuncu metin (vurgulu kelime, aktif madde, altyazı) — okunurluk için koyu ton
+  up: "#1E9E5A"
+  down: "#D9434A"
+  text: "#221E1B"
+  text-muted: "#6F6458"
+  text-dim: "#9A8E80"
+  hairline: "#CFC4B3"
+  grid: "yok"                # krem zeminde ızgara kullanılmaz
+  editorial-panel: >
+    Panel/tam ekranda kart kutusu yok (düz krem zemin). "step" verilmişse solda dev turuncu numara
+    (Montserrat Black ~470 px), sağda "4 / 6" mono etiket + ince çizgi + içerik. Panelin alt kenarı
+    videoya 150 px degrade ile erir (sert çizgi yok). Split altyazısı panelde koyu mürekkep, kontur yok.
+
+colors:                      # lacivert tema (eski)
   bg: "#08142D"            # zemin, split/pip paneli, B-roll dolgusu (ffmpeg: 0x08142D)
   card: "rgba(8,20,45,0.92)"
   card-solid: "#0E1F42"
@@ -85,8 +106,9 @@ components:
 
 ## Ruh
 
-Borsa anlatan, sakin ama net bir yatırımcı. Görsel dil **"tasarlanmış ama gösterişsiz"**: koyu lacivert,
-beyaz, tek turuncu. Hedef referans: Tasarımcı Dayı — "Bu Videoyu Ben Editlemedim!" seviyesi; tek tasarım
+Borsa anlatan, sakin ama net bir yatırımcı. Görsel dil **"tasarlanmış ama gösterişsiz"**: krem zemin
+(konuşanın ortamından), koyu mürekkep, tek turuncu — grafik katman videonun devamı gibi durur, üstüne
+yapıştırılmış gibi değil. Hedef referans: Tasarımcı Dayı — "Bu Videoyu Ben Editlemedim!" seviyesi; tek tasarım
 sistemi, sürekli değişen yerleşim, kaynaklı bilgi sahneleri.
 
 ## Değişmezler (Do)

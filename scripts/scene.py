@@ -14,7 +14,8 @@ Spec (ortak alanlar):
    "region": "band|panel|full",          # band: başın üstü kart / panel: split paneli / full: tam ekran
    "duration": 3.5,                      # sn (overlay süresi)
    "land": 1.0,                          # sahnenin "iniş" anı (sn, overlay başına göre) = konuşmadaki anahtar kelime
-   "eyebrow": "BIST · faiz kararı", "source": "Kaynak: TCMB, 23.10.2026"}
+   "eyebrow": "BIST · faiz kararı", "source": "Kaynak: TCMB, 23.10.2026",
+   "step": "3/6"}                        # opsiyonel: numaralı madde rozeti (her tipte)
   stat:     value, decimals, prefix, suffix, unit, label, (bar: 0-1 doluluk), (direction: up|down)
   compare:  old, new, note                      ("$5" -> "$4", note "%20 daha ucuz")
   list:     title, items:[...], at:[sn,...]     (her madde konuşmada hangi sn'de söyleniyorsa)
@@ -160,6 +161,11 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
     else:
         raise SystemExit(f"bilinmeyen sahne tipi: {typ}")
 
+    if spec.get("step"):  # numaralı madde rozeti: "3/6" -> kartın en üstünde turuncu
+        a_, _, b_ = str(spec["step"]).partition("/")
+        badge = f'<div class="step" id="step">{html.escape(a_)}<span>/{html.escape(b_)}</span></div>' if b_ else f'<div class="step" id="step">{html.escape(a_)}</div>'
+        body = re.sub(r'(<div class="card[^"]*" id="card">)', lambda m: m.group(1) + badge, body, count=1)
+        js = f"tl.fromTo('#step',{{opacity:0,y:14}},{{opacity:1,y:0,duration:0.35,ease:'power3.out'}},0.2);\n" + js
     stage_bg = bg if region == "full" or typ == "question" else "transparent"
     region_bg = bg if region == "panel" else "transparent"
     exit_t = max(land + 0.6, dur - 0.32)
@@ -179,7 +185,7 @@ html,body{{margin:0;background:transparent;}}
 .card.wide{{width:{'100%' if region == 'band' else '92%'};}}
 .eb,.src{{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:{px(30)};color:{C['muted']};letter-spacing:.02em;}}
 .eb{{margin-bottom:{px(14)};}} .src{{margin-top:{px(18)};font-size:{px(24)};color:{C['dim']};}}
-.statrow{{display:flex;align-items:baseline;gap:{px(10)};}}
+.statrow{{display:flex;align-items:baseline;gap:0;}}
 .stat{{font-weight:900;font-size:{px(168)};line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums;display:inline-block;}}
 .pre,.suf{{font-weight:800;font-size:{px(110)};}} .unit{{font-weight:700;font-size:{px(64)};color:{C['muted']};margin-left:{px(8)};}}
 .label{{font-weight:700;font-size:{px(42)};color:{C['muted']};margin-top:{px(8)};}}
@@ -203,6 +209,7 @@ html,body{{margin:0;background:transparent;}}
 .qwrap{{box-sizing:border-box;width:100%;padding:0 {px(80)};margin-top:{'-'+px(240) if fmt == 'reels' else '0'};}}
 .cta{{margin-top:{px(18)};font-weight:800;font-size:{px(52)};color:{C['accent']};}}
 .term{{background:{C['card_solid']};font-family:'JetBrains Mono',monospace;}} .tl-line{{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:{px(44)};line-height:1.5;opacity:0;white-space:pre-wrap;}} .pr{{color:{C['accent']};}}
+.step{{font-weight:900;font-size:{px(84)};line-height:1;color:{C['accent']};letter-spacing:-.02em;margin-bottom:{px(10)};}} .step span{{font-size:{px(44)};color:{C['dim']};font-weight:800;}}
 .qm{{font-weight:900;font-size:{px(160)};line-height:.6;color:{C['accent']};height:{px(70)};}}
 </style></head><body>
 <div id="stage" data-composition-id="main" data-start="0" data-duration="{dur}" data-width="{W}" data-height="{H}">

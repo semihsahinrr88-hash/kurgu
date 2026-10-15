@@ -45,17 +45,21 @@ def main():
            "text": " ".join(w["text"].strip() for w in s)} for s in segs]
     res = whisperx.align(tr, model, meta, audio, "cpu", return_char_alignments=False)
     moved, miss, shifts = 0, 0, []
-    for seg_src, seg_al in zip(segs, res["segments"]):
-        al = [x for x in seg_al.get("words", [])]
-        if len(al) != len(seg_src):  # tokenizasyon farkı: bu segmenti olduğu gibi bırak
-            miss += len(seg_src); continue
-        for w, x in zip(seg_src, al):
-            if "start" in x and "end" in x:
-                shifts.append(x["start"] - w["start"])
-                w["start"], w["end"] = round(float(x["start"]), 3), round(float(x["end"]), 3)
-                moved += 1
-            else:
-                miss += 1
+    # whisperx cümle bazında yeniden böler (nltk) -> segmentler 1:1 eşleşmez; kelimeleri düz sırayla eşle
+    al = [x for sg in res["segments"] for x in sg.get("words", [])]
+    src = [w for sg in segs for w in sg]
+    if len(al) != len(src):
+        print(f"UYARI: kelime sayısı farklı (kaynak {len(src)}, hizalanan {len(al)}) — retime_words.py kullan")
+        al = []
+    for w, x in zip(src, al):
+        if "start" in x and "end" in x:
+            shifts.append(x["start"] - w["start"])
+            w["start"], w["end"] = round(float(x["start"]), 3), round(float(x["end"]), 3)
+            moved += 1
+        else:
+            miss += 1
+    if not al:
+        miss = len(src)
     events = [w for w in d["words"] if w["type"] == "audio_event"]
     out, prev = [], 0.0
     for w in sorted(words + events, key=lambda x: x["start"]):

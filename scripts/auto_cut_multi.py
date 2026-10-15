@@ -9,8 +9,7 @@ from __future__ import annotations
 import argparse, json, subprocess, sys
 from pathlib import Path
 
-BRONZ = ("eq=contrast=1.06:saturation=1.03:gamma=1.02,selectivecolor=reds=-0.08 0 0.06 0.03:"
-         "yellows=-0.05 0.01 0.05 0.02,vibrance=intensity=0.12,unsharp=5:5:0.35")
+BRONZ = ("eq=contrast=1.04:saturation=1.06:gamma=1.0,selectivecolor=reds=-0.10 0 0.07 0.04:yellows=-0.06 0.01 0.06 0.03,vibrance=intensity=0.14,curves=all='0/0 0.6/0.6 0.8/0.775 0.92/0.865 1/0.935',unsharp=3:3:0.12")
 
 
 def main():

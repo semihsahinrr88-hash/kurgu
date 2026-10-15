@@ -30,7 +30,10 @@ def main():
         print(f"{c.stem}: {out.splitlines()[0] if out else '?'}")
         e = json.loads((a.edit_dir / "edl.json").read_text())
         sources.update(e["sources"]); ranges += e["ranges"]
-    grade = BRONZ if a.grade == "bronz" else a.grade
+    grade = a.grade
+    if a.grade == "bronz":   # onaylı ten (F, 15.10.2026): eski bronz %72 + doğal %28 -> LUT ile
+        lut = here / "luts" / "ten_F.cube"
+        grade = BRONZ + (f",lut3d=file={lut}" if lut.exists() else "")
     tot = sum(r["end"] - r["start"] for r in ranges)
     (a.edit_dir / "edl.json").write_text(json.dumps({"version": 1, "sources": sources, "ranges": ranges, "grade": grade,
                                                      "overlays": [], "total_duration_s": round(tot, 2)}, ensure_ascii=False, indent=1))

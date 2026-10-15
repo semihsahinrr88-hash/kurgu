@@ -15,6 +15,9 @@ s = s.replace("    rate: str | None = None,\n) -> None:\n    \"\"\"Extract a cut
               "    rate: str | None = None,\n    zoom: float = 1.0,\n    push: float = 0.0,\n    layout: str = \"talk\",\n) -> None:\n    \"\"\"Extract a cut range", 1)
 s = s.replace("    vf_parts.append(scale)\n    if grade_filter:",
 """    vf_parts.append(scale)
+    if grade_filter:   # renk ayarı layout'tan ÖNCE: panel zemini tema rengini birebir korur
+        vf_parts.append(grade_filter)
+    grade_filter = None
     if portrait:
         W, H = (720, 1280) if draft else (1080, 1920)
         cy = 0.35   # dikeyde yüz üstte
@@ -31,7 +34,8 @@ s = s.replace("    vf_parts.append(scale)\n    if grade_filter:",
         vf_parts.append(f"crop={W}:{H}:(iw-{W})/2:(ih-{H})*{cy}")
     if layout == "split" and portrait:      # Reels: konuşan altta %55, üst panel boş
         ph = int(H * 0.55) // 2 * 2
-        vf_parts.append(f"crop={W}:{ph}:0:({H}-{ph})*0.25,pad={W}:{H}:0:{H-ph}:color={_PANEL}")
+        SPLIT_Y = 0.55  # kırpma penceresi: 0.25 yüzü çok alta itiyordu; 0.55 yüzü alt alanın ortasına yakın tutar
+        vf_parts.append(f"crop={W}:{ph}:0:({H}-{ph})*{SPLIT_Y},pad={W}:{H}:0:{H-ph}:color={_PANEL}")
     elif layout == "split":                 # YouTube: konuşan sağda %50, sol panel boş
         pw = int(W * 0.5) // 2 * 2
         vf_parts.append(f"crop={pw}:{H}:({W}-{pw})/2:0,pad={W}:{H}:{W-pw}:0:color={_PANEL}")

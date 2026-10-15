@@ -114,9 +114,9 @@ ffmpeg -y -i in.mp4 -stream_loop -1 -i muzik.mp3 -filter_complex "[1:a]volume=-1
 ```
 **Loudness:** iki geçişli loudnorm (`render.apply_loudnorm_two_pass`) → -14 LUFS, ≤ -1 dBTP. Ölçüm -15 altında kalırsa önce `acompressor=threshold=-26dB:ratio=3:attack=5:release=90:makeup=8`.
 
-**Renk — "bronz, parlamasız" (Semih onaylı, 15.10.2026):** EDL `"grade"` (`auto_cut_multi.py --grade bronz` bunu yazar):
-`eq=contrast=1.04:saturation=1.06:gamma=1.0,selectivecolor=reds=-0.10 0 0.07 0.04:yellows=-0.06 0.01 0.06 0.03,vibrance=intensity=0.14,curves=all='0/0 0.6/0.6 0.8/0.775 0.92/0.865 1/0.935',unsharp=3:3:0.12`
-Ten sıcaklığı korunur, tepe ışıklar `curves` ile yumuşakça kısılır (alın/burun parlamaz), keskinlik hafif. Eski ayar (contrast 1.06 + unsharp 0.35) yüzün %13'ünü patlatıyordu — kullanma. Ölçüm: yüz bölgesinde L>225 piksel oranı ham çekimden fazla olmamalı. Global colorbalance duvarı bejleştirir; kullanma. Yeni ışıkta önce/sonra karesini karşılaştır. Diğer presetler: `grade.py --list-presets`.
+**Renk — "ten F" (Semih onaylı, 15.10.2026; önceki bronz fazla turuncuydu):** `auto_cut_multi.py --grade bronz` EDL'e şunu yazar: `BRONZ` sabiti + `,lut3d=file=<studio>/luts/ten_F.cube`. LUT = eski bronz görünüm %72 + doğal görünüm %28 (Semih iki görünüm arasında %72'yi seçti). Asıl turunculuk kaynağı: iPhone HLG HDR → render.py'deki `hable desat=0` tonemap ten doygunluğunu ~2 katına çıkarıyor; LUT bunu dengeliyor. Ölçüm (IMG_6603 2. sn yüz): doygunluk ham 0.22 · eski 0.46 · F 0.40; patlak piksel %0.
+Grade layout'tan ÖNCE uygulanır (patch_zoom): split/pip paneli tema rengini birebir korur. Yeni ışık/kamerada önce/sonra karesini Semih'e göster; "daha doğal/daha sıcak" isterse LUT karışım oranını değiştir (doğal zincir: `zscale=tin=bt709:t=bt709:pin=bt2020:p=bt709:min=bt2020nc:m=bt709` + `eq=contrast=1.08:saturation=1.05:gamma=0.96`).
+**Split kadraj:** Reels split'te konuşan alt %55; kırpma penceresi `SPLIT_Y=0.55` (0.25 yüzü çok alta itiyordu — Semih: "beni o kadar alta kaydırma").
 
 ## 6. Final geçiş (render.py dışı)
 **Hız notu:** iPhone 60 fps HEVC kaynak 2 CPU'lu bulutta yavaş çözülür (72 sn video ≈ 22 dk base render). Bu yüzden base'i (kesim + layout + zoom + grade, overlay'siz) BİR kez render et, sahne/gömülü kelime/CTA/altyazıyı tek ffmpeg birleştirme geçişinde ekle (repoda `examples/reels1/compose.py` örneği: her overlay `setpts=PTS-STARTPTS+T/TB` + `enable=between`, en sonda `ass`). Düzeltme gerekirse sadece birleştirme geçişi tekrarlanır, base değil. **Önizleme tuzağı:** şeffaf webm'de `-ss` girişten önce verilirse kare boş gelir; tek kare kontrolünde `-c:v libvpx-vp9 -i x.webm -ss T` (çıktı tarafı seek) kullan.
@@ -146,7 +146,7 @@ Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ik
 ## Semih'in kalıcı tercihleri
 - Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`).
 - Altyazı: beyaz Montserrat ExtraBold, normal harf, turuncu anahtar kelimeler, sola hizalı, ~2 satır, alt üçte bir; imza satırı ve "YENİ BÖLÜM" bandı yok.
-- Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Bronz ama parlamasız grade (§5). Kartlar yüzü kapatmaz.
+- Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Ten F grade, doğal sıcak (§5). Kartlar yüzü kapatmaz.
 - Format modu her editte önce; efekt dozu moda göre; her efektin konuşmada nedeni var — anlamsız edit yok.
 - Uygun an varsa animasyonlu motion graphics (sayaç, mini grafik, ticker/% etiketi, sıralı liste) kullan; statik karta kaçma.
 - Hedef seviye: Tasarımcı Dayı "Bu Videoyu Ben Editlemedim!" — tek tasarım sistemi (frame.md), sürekli değişen layout, kaynaklı bilgi sahneleri.

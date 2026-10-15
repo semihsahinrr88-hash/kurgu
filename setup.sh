@@ -21,6 +21,7 @@ WX=$!
 echo "3/6 BorsaSemih scriptleri + fontlar + sfx"
 cp "$PKG"/scripts/*.py "$ST/"
 mkdir -p "$ST/fonts" && cp "$PKG"/fonts/*.ttf "$ST/fonts/"
+mkdir -p "$ST/luts" && cp "$PKG"/luts/*.cube "$ST/luts/"   # ten LUT (F tonu)
 ln -sfn "$PKG/sfx" "$ST/sfx"
 cp "$PKG/frame.md" "$ST/frame.md"; mkdir -p "$ST/templates" && cp "$PKG"/templates/* "$ST/templates/"
 

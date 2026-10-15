@@ -17,7 +17,6 @@ pip install -q --break-system-packages faster-whisper librosa matplotlib pillow 
 ( pip install -q --break-system-packages whisperx >/tmp/whisperx_install.log 2>&1 && echo "whisperx hazır" >>/tmp/whisperx_install.log ) &
 WX=$!
 
-python3 -c "import nltk, nltk.pathsec as p; p.ALLOW_PROXIED_FETCH=True; nltk.download('punkt_tab', quiet=True)" >/dev/null 2>&1 || echo "UYARI: nltk punkt_tab indirilemedi (align_words için gerekli)"
 
 echo "3/6 BorsaSemih scriptleri + fontlar + sfx"
 cp "$PKG"/scripts/*.py "$ST/"
@@ -52,4 +51,5 @@ grep -c SUB_UPPER render.py >/dev/null && grep -q 'r.get("layout"' render.py && 
 ls "$ST/sfx/"*.wav | wc -l | xargs -I{} echo "sfx: {} efekt"
 ffprobe -version | head -1
 wait $WX || true; tail -1 /tmp/whisperx_install.log
+python3 -c "import nltk, nltk.pathsec as p; p.ALLOW_PROXIED_FETCH=True; nltk.download('punkt_tab', quiet=True)" >/dev/null 2>&1 || echo "UYARI: nltk punkt_tab indirilemedi (align_words için gerekli)"
 echo "HAZIR: ~/studio"

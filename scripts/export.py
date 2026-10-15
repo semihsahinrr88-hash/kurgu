@@ -3,6 +3,7 @@
   python export.py reels  <final.mp4> <out.mp4>        # Instagram Reels / Shorts / TikTok (1080x1920)
   python export.py youtube <final.mp4> <out.mp4>       # YouTube 16:9
   python export.py cover <video> <out.jpg> --t 1.2 --title "Faiz *düşerse* ne olur?" [--youtube]
+  python export.py teslim <final.mp4> <out.mp4> [--mb 28]    # sohbete gönderim (30 MiB sınırı): iki geçişli, hedef boyut
 
 Reels: H.264 High, yuv420p, sabit 30 fps, ~12 Mbps tepe, AAC 48 kHz 256k, faststart.
 Instagram yüklemede yeniden sıkıştırır; temiz kaynak vermek bulanıklığı azaltır.
@@ -27,6 +28,23 @@ def enc(src, out, w, h, fps=30):
                     "-c:a", "aac", "-b:a", "256k", "-ar", "48000", "-movflags", "+faststart", str(out)],
                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
     print(out)
+
+
+def teslim(src, out, mb):
+    """SendUserFile 30 MiB sınırı için iki geçişli x264 (Instagram zaten ~3-4 Mbps'e sıkıştırır; kayıp fark edilmez)."""
+    dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)],
+                               capture_output=True, text=True).stdout)
+    vk = int(mb * 8 * 1024 * 1024 / dur / 1000) - 200
+    log = str(Path(out).with_suffix(".x264log"))
+    base = ["-c:v", "libx264", "-profile:v", "high", "-preset", "slow", "-b:v", f"{vk}k", "-passlogfile", log, "-r", "30", "-pix_fmt", "yuv420p"]
+    subprocess.run(["ffmpeg", "-y", "-i", str(src), *base, "-pass", "1", "-an", "-f", "mp4", "/dev/null"], check=True,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    subprocess.run(["ffmpeg", "-y", "-i", str(src), *base, "-maxrate", f"{int(vk*1.5)}k", "-bufsize", f"{vk*3}k", "-pass", "2",
+                    "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-movflags", "+faststart", str(out)], check=True,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    for f in Path(out).parent.glob(Path(log).name + "*"):
+        f.unlink(missing_ok=True)
+    print(out, f"{Path(out).stat().st_size / 1048576:.1f} MiB, video {vk} kbps")
 
 
 def wrap(draw, text, font, maxw):
@@ -81,15 +99,18 @@ def cover(video, out, t, title, youtube=False):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=["reels", "youtube", "cover"])
+    ap.add_argument("mode", choices=["reels", "youtube", "cover", "teslim"])
     ap.add_argument("src"); ap.add_argument("out")
     ap.add_argument("--t", type=float, default=1.0)
     ap.add_argument("--title", default="")
     ap.add_argument("--youtube", action="store_true")
+    ap.add_argument("--mb", type=float, default=28.0, help="teslim: hedef dosya boyutu (MiB)")
     a = ap.parse_args()
     if a.mode == "reels":
         enc(a.src, a.out, 1080, 1920)
     elif a.mode == "youtube":
         enc(a.src, a.out, 1920, 1080)
+    elif a.mode == "teslim":
+        teslim(a.src, a.out, a.mb)
     else:
         cover(a.src, a.out, a.t, a.title, a.youtube)

@@ -66,6 +66,8 @@ def main():
     for i in range(len(ev) - 1):                      # boşlukta titreme olmasın: sonraki kareye kadar tut (≤0.3 sn)
         if 0 < ev[i + 1][0] - ev[i][1] < 0.3:
             ev[i][1] = ev[i + 1][0]
+        if ev[i][1] > ev[i + 1][0]:                    # üst üste binme yok (iki satır aynı anda görünmesin)
+            ev[i][1] = ev[i + 1][0]
     head = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {PX}

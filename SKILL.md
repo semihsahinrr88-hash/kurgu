@@ -1,6 +1,6 @@
 ---
 name: video-studyo
-description: Ham video (dikey Reels veya yatay YouTube) verildiğinde BorsaSemih stüdyosuyla (github.com/semihsahinrr88-hash/kurgu) format moduna göre filler/sessizlik/tekrar çekim kesme, Türkçe kelime hizalama, punch-in/split/pip layout, turuncu vurgulu Montserrat altyazı, hazır sahne kütüphanesi (sayaç, karşılaştırma, liste, ticker, soru), lisanslı ses efektleri, Instagram çıkışı ve kapakla final.mp4 üretme. Ücretsiz.
+description: Ham video (dikey Reels veya yatay YouTube) verildiğinde BorsaSemih stüdyosuyla (github.com/semihsahinrr88-hash/kurgu) kesim, Türkçe kelime hizalama, layout, turuncu vurgulu altyazı, hazır sahne kütüphanesi, lisanslı ses efektleri, Instagram çıkışı ve kapakla final.mp4 üretme. Ücretsiz.
 ---
 
 # Video Stüdyo v2 (BorsaSemih)

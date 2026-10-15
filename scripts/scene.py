@@ -131,7 +131,10 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
         ch = spec.get("change", "")
         upc = not ch.strip().startswith("-")
         col = C["up"] if upc else C["down"]
-        body = f"""<div class="card" id="card">{eb(eyebrow)}<div class="tick"><span class="code">{html.escape(spec['code'])}</span><span class="price">{html.escape(spec.get('price',''))}</span>
+        est = (0.74 * 96 * len(spec["code"]) + 0.6 * 64 * len(spec.get("price", "")) + 0.62 * 52 * (len(ch) + 3) + 140) * k
+        avail = (rw if region == "band" else rw * 0.86) - 14 - 104 * k
+        ts = min(1.0, avail / est)
+        body = f"""<div class="card" id="card">{eb(eyebrow)}<div class="tick" style="zoom:{ts:.3f}"><span class="code">{html.escape(spec['code'])}</span><span class="price">{html.escape(spec.get('price',''))}</span>
   <span id="chg" class="chg" style="color:{col};background:{col}2E">{'▲' if upc else '▼'} %{html.escape(ch.lstrip('+-'))}</span></div>{eb(source,'src')}</div>"""
         js = f"tl.fromTo('#chg',{{opacity:0,scale:0.6}},{{opacity:1,scale:1,duration:0.35,ease:'back.out(2)'}},{land:.3f});"
     elif typ == "question":

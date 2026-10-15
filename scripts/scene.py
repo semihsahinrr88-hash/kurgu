@@ -9,7 +9,7 @@ Kullanım:
   python scene.py spec.json -o ... --still 1.2                  # t=1.2 sn'de tek kare PNG (hızlı QA)
 
 Spec (ortak alanlar):
-  {"type": "stat|compare|list|ticker|question|cta|timeline|chapter|quote",
+  {"type": "stat|compare|list|ticker|question|cta|timeline|chapter|quote|terminal",
    "format": "reels|youtube",            # 1080x1920 veya 1920x1080
    "region": "band|panel|full",          # band: başın üstü kart / panel: split paneli / full: tam ekran
    "duration": 3.5,                      # sn (overlay süresi)
@@ -24,6 +24,7 @@ Spec (ortak alanlar):
   timeline: points:[{"label":"2008","text":"Kriz"},...], at:[sn,...]
   chapter:  index ("Bölüm 2"), title           — YouTube bölüm kartı
   quote:    text, who
+  terminal: lines:[...], at:[sn,...]           — "$ not.txt" satırları yazılarak gelir (kapanış dersi)
 Metinlerde *kelime* -> turuncu vurgu. Tamamı büyük harf kullanma.
 """
 from __future__ import annotations
@@ -143,6 +144,17 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
         body = f"""<div class="card" id="card"><div class="h2">{rich(spec['text'])}</div><div class="cta">{html.escape(spec.get('sub','Yorumlara yaz ↓'))}</div></div>"""
     elif typ == "chapter":
         body = f"""<div class="card" id="card">{eb(spec.get('index',''))}<div class="h1">{rich(spec['title'])}</div></div>"""
+    elif typ == "terminal":
+        lines = spec["lines"]
+        at = spec.get("at") or [0.4 + i * max(0.7, (dur - 1.2) / max(1, len(lines))) for i in range(len(lines))]
+        lis = "".join(f'<div class="tl-line" id="l{i}"><span class="pr">$</span> <span id="t{i}"></span></div>' for i in range(len(lines)))
+        body = f"""<div class="card term" id="card">{eb(eyebrow or 'not.txt')}{lis}</div>"""
+        js = ""
+        for i, (ln, t) in enumerate(zip(lines, at)):
+            n = len(ln); d = min(1.2, 0.035 * n)
+            js += (f"tl.set('#l{i}',{{opacity:1}},{float(t):.3f});"
+                   f"(function(){{const o={{n:0}};const s={json.dumps(ln)};tl.to(o,{{n:{n},duration:{d:.3f},ease:'none',"
+                   f"onUpdate:()=>{{document.getElementById('t{i}').textContent=s.slice(0,Math.round(o.n));}}}},{float(t):.3f});}})();\n")
     elif typ == "quote":
         body = f"""<div class="card" id="card"><div class="qm">“</div><div class="h2">{rich(spec['text'])}</div>{eb(spec.get('who',''),'src')}</div>"""
     else:
@@ -190,6 +202,7 @@ html,body{{margin:0;background:transparent;}}
 .chg{{font-weight:800;font-size:{px(52)};padding:{px(8)} {px(22)};border-radius:999px;}}
 .qwrap{{box-sizing:border-box;width:100%;padding:0 {px(80)};margin-top:{'-'+px(240) if fmt == 'reels' else '0'};}}
 .cta{{margin-top:{px(18)};font-weight:800;font-size:{px(52)};color:{C['accent']};}}
+.term{{background:{C['card_solid']};font-family:'JetBrains Mono',monospace;}} .tl-line{{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:{px(44)};line-height:1.5;opacity:0;white-space:pre-wrap;}} .pr{{color:{C['accent']};}}
 .qm{{font-weight:900;font-size:{px(160)};line-height:.6;color:{C['accent']};height:{px(70)};}}
 </style></head><body>
 <div id="stage" data-composition-id="main" data-start="0" data-duration="{dur}" data-width="{W}" data-height="{H}">

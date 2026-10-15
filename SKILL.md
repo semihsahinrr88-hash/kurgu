@@ -79,7 +79,8 @@ python3 scene.py spec.json -o edit/animations/slot_1               # render.webm
 Tipler ve alanlar (ortak: `format` reels|youtube, `region` band|panel|full, `duration`, `land`, `eyebrow`, `source`; metinde `*kelime*` = turuncu):
 - `stat`: value, decimals, prefix ("%"), suffix, unit, label, bar (0-1), direction (up|down)
 - `compare`: old, new, note — `ticker`: code, price, change ("+3,2") — `question`: text
-- `list`: title, items, at[] — `timeline`: title, points[{label,text}], at[] — `chapter`: index, title — `quote`: text, who — `cta`: text, sub
+- `list`: title, items, at[] — `timeline`: title, points[{label,text}], at[] — `chapter`: index, title — `quote`: text, who — `cta`: text, sub — `terminal`: lines[], at[] (yazılarak gelen "$" satırları, kapanış dersi)
+- Kütüphanede henüz yok, gerekince yaz ve ekle: nokta ızgarası ("binlerce yatırımcı" → yüzlerce nokta, bir kısmı turuncu), mini çizgi grafik, kapanış künyesi ("Montaj: Claude · Son kontrol: Semih", Semih isterse).
 - `region`: `band` = başın üstündeki boş duvar (önce kare alıp başın nerede başladığına bak), `panel` = `split` layout'un paneli (EDL'de aynı range `layout: "split"` olmalı), `full` = tam ekran (opak zemin; altyazı üstte kalır).
 - **Payoff senkronu:** `land` = anahtar kelimenin çıktı zamanı − overlay başlangıcı. Liste/timeline `at[]` aynı mantık.
 - EDL: `"overlays": [{"file": "animations/slot_1/render.webm", "start_in_output": 3.4, "duration": 3.5}]`. Birden fazla sahne → paralel alt ajanlar (her biri kendi slot klasörü).
@@ -112,7 +113,7 @@ ffmpeg -y -i in.mp4 -stream_loop -1 -i muzik.mp3 -filter_complex "[1:a]volume=-1
 **Loudness:** iki geçişli loudnorm (`render.apply_loudnorm_two_pass`) → -14 LUFS, ≤ -1 dBTP. Ölçüm -15 altında kalırsa önce `acompressor=threshold=-26dB:ratio=3:attack=5:release=90:makeup=8`.
 
 **Renk — "doğal bronz" (Semih onaylı):** EDL `"grade"`:
-`eq=contrast=1.06:saturation=1.03:gamma=1.02,selectivecolor=reds=-0.08 0 0.06 0.03:yellows=-0.05 0.01 0.05 0.02,vibrance=intensity=0.12,unsharp=5:5:0.35` — global colorbalance duvarı bejleştirir, daha güçlü selectivecolor turuncuya kaçar; kullanma. Yeni ışıkta önce/sonra karesini karşılaştır.
+`eq=contrast=1.06:saturation=1.03:gamma=1.02,selectivecolor=reds=-0.08 0 0.06 0.03:yellows=-0.05 0.01 0.05 0.02,vibrance=intensity=0.12,unsharp=5:5:0.35` — global colorbalance duvarı bejleştirir, daha güçlü selectivecolor turuncuya kaçar; kullanma. Yeni ışıkta önce/sonra karesini karşılaştır. Diğer presetler: `grade.py --list-presets`.
 
 ## 6. Final geçiş (render.py dışı)
 1. `python3 render.py edit/edl.json -o edit/stage1.mp4 --no-subtitles --no-loudnorm` (kesim + layout/zoom/push + grade + sahne/B-roll overlay'leri)

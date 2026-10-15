@@ -139,7 +139,7 @@ Ten sıcaklığı korunur, tepe ışıklar `curves` ile yumuşakça kısılır (
  "ranges": [{"source": "klip", "start": 0.0, "end": 3.5, "beat": "HOOK", "quote": "...", "reason": "...", "push": 0.05},
             {"source": "klip", "start": 4.1, "end": 6.0, "beat": "VURGU", "quote": "...", "reason": "...", "zoom": 1.12},
             {"source": "klip", "start": 6.3, "end": 11.0, "beat": "LİSTE", "quote": "...", "reason": "...", "layout": "split"}],
- "grade": "<doğal bronz>", "overlays": [], "total_duration_s": 12.9}
+ "grade": "<bronz, parlamasız — §5>", "overlays": [], "total_duration_s": 12.9}
 ```
 Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ikisi birlikte olur. Dikeyde kırpma %35'ten (yüz üstte); kafa kesiliyorsa zoom'u düşür.
 

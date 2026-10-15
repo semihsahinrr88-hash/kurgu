@@ -74,7 +74,8 @@ def cover(video, out, t, title, youtube=False):
         for x in range(W): g.line([(x, 0), (x, H)], fill=int(200 * max(0, 1 - x / (W * 0.62))))
     else:
         for y in range(H): g.line([(0, y), (W, y)], fill=int(200 * min(1, max(0, (y - H * 0.36) / (H * 0.26)))))
-    im = Image.composite(Image.new("RGB", (W, H), (8, 20, 45)), im, sh)
+    perde = (8, 20, 45) if os.environ.get("STUDIO_THEME") == "lacivert" else (34, 30, 27)  # krem tema: sıcak koyu mürekkep
+    im = Image.composite(Image.new("RGB", (W, H), perde), im, sh)
     d = ImageDraw.Draw(im)
     size = 64 if youtube else 104
     font = ImageFont.truetype(str(PKG / "fonts" / "Montserrat-Black.ttf"), size)

@@ -55,6 +55,7 @@ def region_rect(fmt, region):
     if region == "full":
         return W, H, (0, 0, W, H), True
     if fmt == "reels":
+        # panel: alt 220 px altyazı şeridi (split anında altyazı yüze değil buraya düşer, bkz make_ass)
         return W, H, ((0, 0, W, 864) if region == "panel" else (60, 130, W - 120, 420)), region == "panel"
     return W, H, ((0, 0, 960, H) if region == "panel" else (80, 70, 900, 360)), region == "panel"
 
@@ -180,7 +181,7 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
 {fonts}
 html,body{{margin:0;background:transparent;}}
 #stage{{position:relative;width:{W}px;height:{H}px;overflow:hidden;background:{stage_bg};font-family:'Montserrat',sans-serif;color:{C['text']};}}
-#region{{position:absolute;left:{rx}px;top:{ry}px;width:{rw}px;height:{rh}px;display:flex;flex-direction:column;justify-content:{center};align-items:{'center' if region != 'band' else 'stretch'};background:{region_bg};}}
+#region{{position:absolute;left:{rx}px;top:{ry}px;width:{rw}px;height:{rh}px;box-sizing:border-box;padding-bottom:{220 if (region == 'panel' and fmt == 'reels') else 0}px;display:flex;flex-direction:column;justify-content:{center};align-items:{'center' if region != 'band' else 'stretch'};background:{region_bg};}}
 .card{{box-sizing:border-box;background:{C['card']};border-left:14px solid {C['stripe']};border-radius:28px;padding:{px(44)} {px(52)};box-shadow:0 24px 60px rgba(0,0,0,.35);width:{'100%' if region == 'band' else '86%'};}}
 .card.wide{{width:{'100%' if region == 'band' else '92%'};}}
 .eb,.src{{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:{px(30)};color:{C['muted']};letter-spacing:.02em;}}

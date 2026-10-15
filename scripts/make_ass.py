@@ -48,6 +48,9 @@ def main():
     hl = [h.strip().replace("I", "ı").replace("İ", "i").lower() for h in a.hl.split(",") if h.strip()]
     render.CHUNK_WORDS = max(3, a.words - 1); render.CHUNK_MAX_WORDS = a.words
     edl = json.loads((a.edit_dir / "edl.json").read_text())
+    # Reels split: konuşan alt %55'te -> normal altyazı yüze/ağza düşer. Split range'lerinde altyazı panelin
+    # alt şeridine (y≈650-850, scene.py panelde alt 220 px'i boş bırakır) çıkar.
+    SPLIT_MV = 1920 - 850 if not a.youtube else a.margin_v
     ev, off = [], 0.0
     for r in edl["ranges"]:
         s0, s1 = float(r["start"]), float(r["end"])
@@ -61,7 +64,8 @@ def main():
                 if i == len(ch) - 1:
                     t = t.rstrip(".,;:")
                 parts.append("{" + (ORANGE if is_key(t, hl) else WHITE) + "}" + t)
-            ev.append([st, max(en, st + 0.35), " ".join(parts)])
+            sty = "Split" if (r.get("layout") == "split" and not a.youtube) else "Semih"
+            ev.append([st, max(en, st + 0.35), " ".join(parts), sty])
         off += s1 - s0
     for i in range(len(ev) - 1):                      # boşlukta titreme olmasın: sonraki kareye kadar tut (≤0.3 sn)
         if 0 < ev[i + 1][0] - ev[i][1] < 0.3:
@@ -78,12 +82,13 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Semih,Montserrat ExtraBold,{a.size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,4,3,{al},{ml},{mr},{a.margin_v},1
+Style: Split,Montserrat ExtraBold,{int(a.size * 0.86)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,4,3,{al},{ml},{mr},{SPLIT_MV},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
     out = a.o or a.edit_dir / "captions.ass"
-    out.write_text(head + "".join(f"Dialogue: 0,{ts(s)},{ts(e)},Semih,,0,0,0,,{{\\fad(60,0)}}{t}\n" for s, e, t in ev),
+    out.write_text(head + "".join(f"Dialogue: 0,{ts(s)},{ts(e)},{sty},,0,0,0,,{{\\fad(60,0)}}{t}\n" for s, e, t, sty in ev),
                    encoding="utf-8")
     print(f"{out} | {len(ev)} kare")
 

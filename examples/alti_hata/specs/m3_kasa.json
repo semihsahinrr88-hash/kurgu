@@ -1,0 +1,13 @@
+{
+ "type": "prop",
+ "prop": "kasa",
+ "region": "panel",
+ "step": "3/6",
+ "title": "Tek hisseye *en fazla %10*",
+ "at": [
+  1.29,
+  4.74
+ ],
+ "format": "reels",
+ "duration": 6.785
+}

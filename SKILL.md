@@ -57,6 +57,8 @@ Her cümleyi etiketle, planda saniye saniye listele. Sahne tipleri `scene.py` ad
 | Rakam, yüzde, fiyat, oran | `stat` (count-up, iniş = rakam kelimesi) + `ping` · eski→yeni ise `compare` + `pop` |
 | Hisse kodu, endeks, emtia | `ticker` (band) veya grafik varsa tam ekran B-roll |
 | Liste ("3 sebep", "birincisi…") | `split` + `list` (her madde `at` = söylendiği an) + her maddede `tick` |
+| Fikir anlatılan madde/cümle (kural, örnek, "kira parasıyla girme", "%10'dan fazla koymam") | `split` + `prop` — söyleneni tekrar yazan liste/kart yerine fikri GÖSTEREN animasyon (önce `props.py`'deki hazırları dene; yoksa yeni prop yaz + push) |
+| Maddeli videonun hook'u | `proof` kartları (gerçek ekran görüntüsü varsa onlar, yoksa madde ön izlemesi) |
 | Soru / tez cümlesi | `question` (konuşan kararır, ortada büyük cümle, tek kelime turuncu) |
 | Tarih, süreç, tarihçe | `timeline` (panel veya full) |
 | Tablo, çok rakamlı karşılaştırma | `pip` + B-roll (tablo görseli) |
@@ -149,6 +151,7 @@ Grade layout'tan ÖNCE uygulanır (patch_zoom): split/pip paneli tema rengini bi
 Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ikisi birlikte olur. Dikeyde kırpma %35'ten (yüz üstte); kafa kesiliyorsa zoom'u düşür.
 
 ## Semih'in kalıcı tercihleri
+- **Onaylı standart (18.10.2026, "6 hata" yeniden kurgusu — "bu şekilde devam edelim"):** hook'ta `proof` kartları · her madde = `split` + `prop` fikir animasyonu (dev turuncu numara + başlık), ardından yüz + zoom/push (split'ler arka arkaya gelmez) · zirve cümlede zoom 1.15 + `impact-bass-1` · donmuş kare + `cta` · render öncesi `storyboard.jpg` onayı. Referans proje: `examples/alti_hata/` (plan.py + compose.py).
 - Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`).
 - Altyazı: beyaz Montserrat ExtraBold, normal harf, turuncu anahtar kelimeler, sola hizalı, ~2 satır, alt üçte bir; imza satırı ve "YENİ BÖLÜM" bandı yok.
 - Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Ten F grade, doğal sıcak (§5). Kartlar yüzü kapatmaz.

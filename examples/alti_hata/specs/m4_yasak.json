@@ -1,0 +1,14 @@
+{
+ "type": "prop",
+ "prop": "yasak_para",
+ "region": "panel",
+ "step": "4/6",
+ "title": "Bu para borsaya *girmez*",
+ "at": [
+  0.6,
+  1.26,
+  2.92
+ ],
+ "format": "reels",
+ "duration": 4.882
+}

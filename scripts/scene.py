@@ -9,7 +9,7 @@ Kullanım:
   python scene.py spec.json -o ... --still 1.2                  # t=1.2 sn'de tek kare PNG (hızlı QA)
 
 Spec (ortak alanlar):
-  {"type": "stat|compare|list|ticker|question|cta|timeline|chapter|quote|terminal",
+  {"type": "stat|compare|list|ticker|question|cta|timeline|chapter|quote|terminal|prop|proof",
    "format": "reels|youtube",            # 1080x1920 veya 1920x1080
    "region": "band|panel|full",          # band: başın üstü kart / panel: split paneli / full: tam ekran
    "duration": 3.5,                      # sn (overlay süresi)
@@ -26,6 +26,8 @@ Spec (ortak alanlar):
   chapter:  index ("Bölüm 2"), title           — YouTube bölüm kartı
   quote:    text, who
   terminal: lines:[...], at:[sn,...]           — "$ not.txt" satırları yazılarak gelir (kapanış dersi)
+  prop:     prop (kasa|yasak_para|plan_formu|para_akisi|risk|odak|yonetim), title, step, at… — bkz props.py
+  proof:    items:[{"img":..}|{"n":"1","text":".."}], at, title — kanıtlı hook (kartlar yelpaze)
 Metinlerde *kelime* -> turuncu vurgu. Tamamı büyük harf kullanma.
 """
 from __future__ import annotations
@@ -92,7 +94,8 @@ def build(spec: dict) -> str:
         bg = C["scrim"]
     eyebrow = spec.get("eyebrow", "")
     source = spec.get("source", "")
-    body, js = "", ""
+    body, js, extra_css = "", "", ""
+    px = lambda v: f"{v * k:.0f}px"
 
     def eb(txt, cls="eb"):
         return f'<div class="{cls}">{html.escape(txt)}</div>' if txt else ""
@@ -174,11 +177,19 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
                    f"onUpdate:()=>{{document.getElementById('t{i}').textContent=s.slice(0,Math.round(o.n));}}}},{float(t):.3f});}})();\n")
     elif typ == "quote":
         body = f"""<div class="card" id="card"><div class="qm">“</div><div class="h2">{rich(spec['text'])}</div>{eb(spec.get('who',''),'src')}</div>"""
+    elif typ == "prop":
+        import props
+        body, js, extra_css = props.build_prop(spec, C, px)
+    elif typ == "proof":
+        import props
+        body, js, extra_css = props.build_proof(spec, C, px, W, rw, rh)
     else:
         raise SystemExit(f"bilinmeyen sahne tipi: {typ}")
 
     ed = C["light"] and region in ("panel", "full") and typ != "question"
-    if spec.get("step") and ed:  # krem panel: dev turuncu numara solda, "4 / 6" etiketi içerikte
+    if typ in ("prop", "proof"):
+        pass  # kendi başlık/numara düzenleri var
+    elif spec.get("step") and ed:  # krem panel: dev turuncu numara solda, "4 / 6" etiketi içerikte
         a_, _, b_ = str(spec["step"]).partition("/")
         lab = f'<div class="eb steplab">{html.escape(a_.strip())} / {html.escape(b_.strip())}</div>' if b_ else ""
         body = re.sub(r'(<div class="card[^"]*" id="card">)', lambda m: m.group(1) + lab, body, count=1)
@@ -197,7 +208,6 @@ tl.fromTo('#note',{{opacity:0,y:16}},{{opacity:1,y:0,duration:0.35,ease:"power3.
         for fam, f, w in [("Montserrat", "Montserrat-Medium.ttf", 500), ("Montserrat", "Montserrat-SemiBold.ttf", 600),
                           ("Montserrat", "Montserrat-Bold.ttf", 700), ("Montserrat", "Montserrat-ExtraBold.ttf", 800),
                           ("Montserrat", "Montserrat-Black.ttf", 900), ("JetBrains Mono", "JetBrainsMono-Medium.ttf", 500)])
-    px = lambda v: f"{v * k:.0f}px"
     center = "center" if region in ("panel", "full") else "flex-start"
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
 {fonts}
@@ -240,6 +250,7 @@ html,body{{margin:0;background:transparent;}}
 .bign{{font-weight:900;font-size:{px(470)};line-height:.78;letter-spacing:-.04em;color:{C['accent']};flex:none;margin-top:-{px(20)};}}
 .steplab{{color:{C['muted']};border-bottom:3px solid {C['hair']};padding-bottom:{px(14)};margin-bottom:{px(22)} !important;}}
 #region.ed::after{{content:"";position:absolute;left:0;right:0;top:100%;height:{px(150)};background:linear-gradient({C['bg']},{C['bg']}00);pointer-events:none;}}
+{extra_css}
 .qm{{font-weight:900;font-size:{px(160)};line-height:.6;color:{C['accent']};height:{px(70)};}}
 </style></head><body>
 <div id="stage" data-composition-id="main" data-start="0" data-duration="{dur}" data-width="{W}" data-height="{H}">
@@ -275,6 +286,12 @@ def main():
     for f in (PKG / "fonts").glob("*.ttf"):
         shutil.copy(f, out / "fonts" / f.name)
     shutil.copy(PKG / "templates" / "gsap.min.js", out / "gsap.min.js")
+    for i, it in enumerate(spec.get("items") or []):  # proof görselleri: spec'e göre göreli yol -> proje klasörü
+        if isinstance(it, dict) and it.get("img"):
+            src = Path(it["img"]) if Path(it["img"]).is_absolute() else (a.spec.parent / it["img"])
+            dst = f"img_{i}{src.suffix}"
+            shutil.copy(src, out / dst)
+            it["img"] = dst
     (out / "index.html").write_text(build(spec), encoding="utf-8")
     (out / "spec.json").write_text(json.dumps(spec, ensure_ascii=False, indent=1))
     print(f"yazıldı: {out/'index.html'}")

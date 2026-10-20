@@ -1,0 +1,41 @@
+{
+ "type": "proof",
+ "region": "band",
+ "items": [
+  {
+   "n": "1",
+   "text": "Yönetim"
+  },
+  {
+   "n": "2",
+   "text": "Para akışı"
+  },
+  {
+   "n": "3",
+   "text": "Tek hisse"
+  },
+  {
+   "n": "4",
+   "text": "Kira parası"
+  },
+  {
+   "n": "5",
+   "text": "Plan"
+  },
+  {
+   "n": "6",
+   "text": "Odak"
+  }
+ ],
+ "at": [
+  0.15,
+  0.3,
+  0.45,
+  0.6,
+  0.75,
+  0.9
+ ],
+ "format": "reels",
+ "theme": "petrol",
+ "duration": 3.108
+}

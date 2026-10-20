@@ -18,6 +18,8 @@ WHITE, ORANGE = r"\c&HFFFFFF&", r"\c&H1E8CFF&"   # ASS renk BGR: #FF8C1E turuncu
 INK, ORANGE_INK = r"\c&H1B1E22&", r"\c&H0A67D9&"   # #221E1B / #D9670A
 import os
 KREM = os.environ.get("STUDIO_THEME", "krem") != "lacivert"
+if os.environ.get("STUDIO_THEME") == "petrol":  # 19.10.2026: turuncu yerine petrol — videoda açık ton, panelde koyu petrol
+    ORANGE, INK, ORANGE_INK = r"\c&HD2C235&", r"\c&H2B2614&", r"\c&H8C7C0F&"   # #35C2D2 / #14262B / #0F7C8C
 
 
 def ts(t):

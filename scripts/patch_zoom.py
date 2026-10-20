@@ -6,7 +6,7 @@ s = open('render.py').read()
 if '"layout"' in s:
     print("yama 3 zaten var"); raise SystemExit
 # panel zemini temadan (scene.py ile aynı): krem varsayılan
-PANEL_HDR = 'import os as _os\n_PANEL = "0x08142D" if _os.environ.get("STUDIO_THEME") == "lacivert" else "0xEFE8DB"\n_FRAME = "0x2F80FF" if _os.environ.get("STUDIO_THEME") == "lacivert" else "0xFF8C1E"\n'
+PANEL_HDR = 'import os as _os\n_TH = _os.environ.get("STUDIO_THEME", "krem")\n_PANEL = {"lacivert": "0x08142D", "petrol": "0xE9ECEC"}.get(_TH, "0xEFE8DB")\n_FRAME = {"lacivert": "0x2F80FF", "petrol": "0x0F7C8C"}.get(_TH, "0xFF8C1E")\n'
 if "from __future__ import annotations\n" in s:
     s = s.replace("from __future__ import annotations\n", "from __future__ import annotations\n" + PANEL_HDR, 1)
 else:

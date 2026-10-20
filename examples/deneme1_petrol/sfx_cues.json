@@ -1,0 +1,64 @@
+[
+ {
+  "t": 0.0,
+  "type": "impact-bass-2"
+ },
+ {
+  "t": 3.208,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 11.746,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 23.306,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 32.825,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 42.689,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 56.803,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 52.256,
+  "type": "impact-bass-1"
+ },
+ {
+  "t": 64.147,
+  "type": "tick",
+  "db": -6
+ },
+ {
+  "t": 64.567,
+  "type": "tick",
+  "db": -6
+ },
+ {
+  "t": 64.987,
+  "type": "tick",
+  "db": -6
+ },
+ {
+  "t": 65.407,
+  "type": "tick",
+  "db": -6
+ },
+ {
+  "t": 65.827,
+  "type": "tick",
+  "db": -6
+ },
+ {
+  "t": 66.247,
+  "type": "tick",
+  "db": -6
+ }
+]

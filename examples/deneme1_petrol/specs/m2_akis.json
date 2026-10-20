@@ -1,0 +1,18 @@
+{
+ "type": "prop",
+ "prop": "para_akisi",
+ "region": "panel",
+ "step": "2/6",
+ "title": "Para nereye *akıyor*?",
+ "at": [
+  2.54,
+  3.18,
+  3.65,
+  4.13
+ ],
+ "land": 5.83,
+ "target": "Borsa",
+ "format": "reels",
+ "theme": "petrol",
+ "duration": 7.533
+}

@@ -176,33 +176,43 @@ def p_para_akisi(spec, C):
     land = float(spec.get("land", at[-1] + 0.8))
     pos = [(170, 80), (750, 80), (750, 360), (170, 360)][:len(items)]
     svg, js = "", ""
-    # kenar yolları (döngü)
+    # kenar yolları (döngü) — noktalar SADECE bu kesikli çizgilerin üstünde gezer (19.10.2026: hap metinlerini kapatmasın)
+    edges = []
     for i in range(len(pos)):
         (x1, y1), (x2, y2) = pos[i], pos[(i + 1) % len(pos)]
         if y1 == y2:
-            d = f"M{x1 + (130 if x2 > x1 else -130)} {y1} L{x2 + (-130 if x2 > x1 else 130)} {y2}"
+            a, b = (x1 + (130 if x2 > x1 else -130), y1), (x2 + (-130 if x2 > x1 else 130), y2)
         else:
-            d = f"M{x1} {y1 + (50 if y2 > y1 else -50)} L{x2} {y2 + (-50 if y2 > y1 else 50)}"
-        svg += f'<path id="e{i}" d="{d}" fill="none" stroke="{C["hair"]}" stroke-width="5" stroke-dasharray="4 14" stroke-linecap="round" opacity="0"/>'
+            a, b = (x1, y1 + (50 if y2 > y1 else -50)), (x2, y2 + (-50 if y2 > y1 else 50))
+        edges.append((a, b))
+        svg += f'<path id="e{i}" d="M{a[0]} {a[1]} L{b[0]} {b[1]}" fill="none" stroke="{C["hair"]}" stroke-width="5" stroke-dasharray="4 14" stroke-linecap="round" opacity="0"/>'
         js += f"tl.to('#e{i}',{{opacity:1,duration:0.3}},{0.3 + i*0.08:.3f});"
     ti = items.index(target) if target in items else 2
+    # hedefe bağlanan çizgi uçları (toplanma noktaları hap kenarında, metnin dışında)
+    n_ = len(pos)
+    docks = [edges[(ti - 1) % n_][1], edges[ti][0]]
+    # akan para noktaları — haplardan ÖNCE çizilir (z-sırası: hapların altında kalır)
+    for i, (a, b) in enumerate(edges):
+        for j in range(2):
+            cid = f"d{i}_{j}"
+            svg += f'<circle id="{cid}" cx="{a[0]}" cy="{a[1]}" r="11" fill="{C["accent"]}" opacity="0"/>'
+            t0 = 0.6 + j * 0.5 + i * 0.12
+            if i == (ti - 1) % n_:
+                dock = b
+            elif i == ti:
+                dock = a
+            else:  # karşı kenar: çizgi boyunca en yakın hedef ucuna (orta boşluktan, hap üstünden değil)
+                dock = min(docks, key=lambda d: (d[0] - (a[0] + b[0]) / 2) ** 2 + (d[1] - (a[1] + b[1]) / 2) ** 2)
+            js += (f"tl.set('#{cid}',{{opacity:1}},{t0:.3f});"
+                   f"tl.fromTo('#{cid}',{{attr:{{cx:{a[0]},cy:{a[1]}}}}},{{attr:{{cx:{b[0]},cy:{b[1]}}},duration:0.9,ease:'power1.inOut',repeat:{max(0, int((land-t0)/0.9)-1)}}},{t0:.3f});"
+                   f"tl.to('#{cid}',{{attr:{{cx:{dock[0]},cy:{dock[1]}}},duration:0.45,ease:'power3.in'}},{land:.3f});"
+                   f"tl.to('#{cid}',{{opacity:0,duration:0.1}},{land+0.45:.3f});\n")
     for i, ((x, y), it) in enumerate(zip(pos, items)):
         svg += (f'<g id="n{i}" opacity="0"><rect id="nb{i}" x="{x-125}" y="{y-46}" width="250" height="92" rx="46" '
-                f'fill="{C["card"]}" stroke="{C["text"]}" stroke-width="3"/>{_txt(x, y+2, html.escape(it), C, size=38, weight=800, extra=f"id=\"nt{i}\"")}</g>')
+                f'fill="{C["bg"]}" stroke="{C["text"]}" stroke-width="3"/>{_txt(x, y+2, html.escape(it), C, size=38, weight=800, extra=f"id=\"nt{i}\"")}</g>')
         js += (f"tl.fromTo('#n{i}',{{opacity:0,scale:0.85,transformOrigin:'{x}px {y}px'}},{{opacity:1,scale:1,duration:0.3,ease:'back.out(2)'}},{max(0.2, at[i]-0.15):.3f});"
                f"tl.to('#nb{i}',{{stroke:'{C['accent']}',duration:0.15}},{at[i]:.3f});"
                f"tl.to('#nb{i}',{{stroke:'{C['text']}',duration:0.3}},{at[i]+0.45:.3f});\n")
-    # akan para noktaları: her kenarda döngü
-    for i in range(len(pos)):
-        (x1, y1), (x2, y2) = pos[i], pos[(i + 1) % len(pos)]
-        for j in range(2):
-            cid = f"d{i}_{j}"
-            svg += f'<circle id="{cid}" cx="{x1}" cy="{y1}" r="11" fill="{C["accent"]}" opacity="0"/>'
-            t0 = 0.6 + j * 0.5 + i * 0.12
-            js += (f"tl.set('#{cid}',{{opacity:1}},{t0:.3f});"
-                   f"tl.fromTo('#{cid}',{{attr:{{cx:{x1},cy:{y1}}}}},{{attr:{{cx:{x2},cy:{y2}}},duration:0.9,ease:'power1.inOut',repeat:{max(0, int((land-t0)/0.9)-1)}}},{t0:.3f});"
-                   f"tl.to('#{cid}',{{attr:{{cx:{pos[ti][0]},cy:{pos[ti][1]}}},duration:0.45,ease:'power3.in'}},{land:.3f});"
-                   f"tl.to('#{cid}',{{opacity:0,duration:0.1}},{land+0.45:.3f});\n")
     js += (f"tl.to('#nb{ti}',{{fill:'{C['accent']}',stroke:'{C['accent']}',duration:0.25}},{land+0.4:.3f});"
            f"tl.to('#nt{ti}',{{fill:'#FFFFFF',duration:0.25}},{land+0.4:.3f});"
            f"tl.fromTo('#n{ti}',{{scale:1}},{{scale:1.12,duration:0.18,yoyo:true,repeat:1,transformOrigin:'{pos[ti][0]}px {pos[ti][1]}px'}},{land+0.4:.3f});")

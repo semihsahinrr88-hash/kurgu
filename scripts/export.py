@@ -13,13 +13,13 @@ YouTube kapağı: 1280x720, sol yarıda başlık, sağda yüz.
 """
 from __future__ import annotations
 import argparse, os, re, subprocess
-PAD = "0x08142D" if os.environ.get("STUDIO_THEME") == "lacivert" else "0xEFE8DB"
+PAD = {"lacivert": "0x08142D", "petrol": "0xE9ECEC"}.get(os.environ.get("STUDIO_THEME", "krem"), "0xEFE8DB")
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 _B = Path(__file__).resolve().parent
 PKG = _B if (_B / "fonts").exists() else _B.parent   # ~/studio/ veya paket kökü
-ACCENT, WHITE = (255, 140, 30), (255, 255, 255)
+ACCENT, WHITE = ((53, 194, 210) if os.environ.get("STUDIO_THEME") == "petrol" else (255, 140, 30)), (255, 255, 255)
 
 
 def enc(src, out, w, h, fps=30):
@@ -74,7 +74,7 @@ def cover(video, out, t, title, youtube=False):
         for x in range(W): g.line([(x, 0), (x, H)], fill=int(200 * max(0, 1 - x / (W * 0.62))))
     else:
         for y in range(H): g.line([(0, y), (W, y)], fill=int(200 * min(1, max(0, (y - H * 0.36) / (H * 0.26)))))
-    perde = (8, 20, 45) if os.environ.get("STUDIO_THEME") == "lacivert" else (34, 30, 27)  # krem tema: sıcak koyu mürekkep
+    perde = {"lacivert": (8, 20, 45), "petrol": (20, 38, 43)}.get(os.environ.get("STUDIO_THEME", "krem"), (34, 30, 27))  # krem tema: sıcak koyu mürekkep
     im = Image.composite(Image.new("RGB", (W, H), perde), im, sh)
     d = ImageDraw.Draw(im)
     size = 64 if youtube else 104

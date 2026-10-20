@@ -1,0 +1,24 @@
+{
+ "fx": "checklist",
+ "title": "İşlem açmadan önce",
+ "compact": true,
+ "y": 115,
+ "w": 640,
+ "items": [
+  "Yönetim kötü günde ne yapıyor?",
+  "Para nereye akıyor?",
+  "Tek hisseye en fazla %10",
+  "Kira, taksit, borç parası değil",
+  "Giriş, çıkış, süre yazılı",
+  "Tek piyasa"
+ ],
+ "at": [
+  0.45,
+  0.87,
+  1.29,
+  1.71,
+  2.13,
+  2.55
+ ],
+ "theme": "petrol"
+}

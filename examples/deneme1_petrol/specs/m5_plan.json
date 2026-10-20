@@ -1,0 +1,18 @@
+{
+ "type": "prop",
+ "prop": "plan_formu",
+ "region": "panel",
+ "step": "5/6",
+ "title": "Girmeden önce *yaz*",
+ "at": [
+  0.75,
+  1.65,
+  3.49,
+  7.17
+ ],
+ "stamp": "Yazılı plan",
+ "stamp_at": 8.36,
+ "format": "reels",
+ "theme": "petrol",
+ "duration": 8.596
+}

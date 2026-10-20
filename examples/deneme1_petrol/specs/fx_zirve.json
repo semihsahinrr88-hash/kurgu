@@ -1,0 +1,40 @@
+{
+ "fx": "kinetic_captions",
+ "y": 370,
+ "lines": [
+  [
+   {
+    "w": "Eğer",
+    "s": "m",
+    "at": 0.06
+   },
+   {
+    "w": "bunu",
+    "s": "m",
+    "at": 0.62
+   }
+  ],
+  [
+   {
+    "w": "planlamazsan",
+    "s": "a",
+    "at": 0.82
+   }
+  ],
+  [
+   {
+    "w": "kaybetmeyi",
+    "s": "s",
+    "at": 1.6
+   }
+  ],
+  [
+   {
+    "w": "planlamış olursun",
+    "s": "b",
+    "at": 2.3
+   }
+  ]
+ ],
+ "theme": "petrol"
+}

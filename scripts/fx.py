@@ -958,22 +958,26 @@ class Checklist(Base):
         fo = 1 - ramp(t, self.dur - 0.3, 0.3)
         p = out3(ramp(t, 0, 0.35))
         n = len(self.items)
-        h = 130 + 78 * n
+        cp = bool(self.g("compact"))
+        rh, fs, ts, top, bx = (56, 30, 38, 92, 16) if cp else (78, 38, 46, 120, 21)
+        h = top + 10 + rh * n
         card = rounded(self.w, h, 30, (255, 255, 255, 250))
         d = ImageDraw.Draw(card)
-        d.text((44, 38), self.g("title", "Video planı"), font=font("xb", 46), fill=(20, 22, 26))
+        d.text((44, 30 if cp else 38), self.g("title", "Video planı"), font=font("xb", ts), fill=(20, 22, 26))
         for k, it in enumerate(self.items):
-            y = 120 + 78 * k
+            y = top + rh * k
+            cy = y + rh * 0.36
             done = t >= self.at[k]
             q = back(ramp(t, self.at[k], 0.2), 2.2) if done else 0
             if done:
-                s = 21 * q
-                d.rounded_rectangle([66 - s, y + 22 - s, 66 + s, y + 22 + s], 8, fill=self.acc_card)
+                s_ = bx * q
+                d.rounded_rectangle([66 - s_, cy - s_, 66 + s_, cy + s_], 7, fill=self.acc_card)
                 if q > 0.6:
-                    d.line([(55, y + 23), (63, y + 32), (79, y + 12)], fill=(255, 255, 255), width=5, joint="curve")
+                    d.line([(57, cy + 1), (64, cy + 8), (77, cy - 8)], fill=(255, 255, 255), width=4, joint="curve")
             else:
-                d.rounded_rectangle([45, y + 1, 87, y + 43], 8, outline=(200, 203, 208), width=3)
-            d.text((108, y), it, font=font("bold" if done else "semi", 38), fill=(20, 22, 26) if done else (170, 172, 178))
+                d.rounded_rectangle([66 - bx, cy - bx, 66 + bx, cy + bx], 7, outline=(200, 203, 208), width=3)
+            d.text((104, y + (rh * 0.36) - fs * 0.62), it, font=font("bold" if done else "semi", fs),
+                   fill=(20, 22, 26) if done else (170, 172, 178))
         cs, pad = with_shadow(card, 26, (0, 16), 0.45)
         over(out, cs, self.xy[0] + self.w / 2, self.xy[1] + h / 2 + 40 * (1 - p), p * fo, 0.94 + 0.06 * p, anchor="c")
         return out
@@ -1141,7 +1145,7 @@ class ZoomThrough(Base):
 @fx("kinetic_captions", "Söylenen kelimeler ekranda kelime kelime dizilir (karışık tipografi: kalın / serif italik / vurgu). "
                         "Alanlar: lines [[{w, s:'b'|'s'|'a', at}]...] — at = kelimenin söylendiği sn; box (koyu cam kutu, true), y (0.38·H)")
 class KineticCaptions(Base):
-    STY = {"b": ("black", 88, "white"), "s": ("serif", 110, "white"), "a": ("black", 128, "acc"), "m": ("xb", 64, "white")}
+    STY = {"b": ("black", 76, "white"), "s": ("serif", 96, "white"), "a": ("black", 104, "acc"), "m": ("xb", 56, "white")}
 
     def setup(self):
         lines = self.g("lines") or [[{"w": "Söylediğim", "s": "b", "at": 0.3}], [{"w": "her", "s": "s", "at": 0.6}],
@@ -1163,17 +1167,17 @@ class KineticCaptions(Base):
         tot = sum(hs)
         y = float(self.g("y", H * 0.38)) - tot / 2
         if self.g("box", True):
-            bw = max(sum(im.width for im, _ in r) for r in self.rows) + 120
+            bw = max(sum(im.width for im, _ in r) + 2 * (len(r) - 1) for r in self.rows) + 120
             bx = rounded(bw, tot + 90, 36, (12, 12, 14, 150))
             over(out, bx, W / 2, y + tot / 2 + 10, fo * out3(ramp(t, 0, 0.3)), anchor="c")
         for r, h in zip(self.rows, hs):
-            rw = sum(im.width for im, _ in r)
+            rw = sum(im.width for im, _ in r) + 2 * (len(r) - 1)
             x = (W - rw) / 2
             for im, at in r:
                 if t >= at - 0.05:
                     p = ramp(t, at - 0.05, 0.22)
                     over(out, im, x + im.width / 2, y + h / 2 + 24 * (1 - out3(p)), fo * min(1, p * 2), 0.9 + 0.1 * back(p), anchor="c")
-                x += im.width
+                x += im.width + 2
             y += h
         return out
 
@@ -1272,10 +1276,15 @@ class HookStack(Base):
 
 
 @fx("save_cta", "Kapanış: video bulanıklaşıp kararır, kaydet (bookmark) simgesi düşer + 'Bu videoyu kaydet' + alt satır. "
-                "Alanlar: text ('Bu videoyu *kaydet*'), sub ('Lazım olunca bulursun'), y (0.32·H)")
+                "Alanlar: text ('Bu videoyu\\n*kaydet*' — satırlar \\n), sub ('Lazım olunca bulursun'), size (104), y (0.32·H)")
 class SaveCTA(Base):
     def setup(self):
-        self.t1 = text_img(self.g("text", "Bu videoyu *kaydet*"), font("black", 104), (255, 255, 255), acc=self.acc, shadow=True)
+        lines = str(self.g("text", "Bu videoyu\n*kaydet*")).split("\n")
+        ims = [text_img(l, font("black", int(self.g("size", 104))), (255, 255, 255), acc=self.acc, shadow=True) for l in lines]
+        self.t1 = Image.new("RGBA", (max(i.width for i in ims), sum(i.height - 22 for i in ims) + 22), (0, 0, 0, 0))
+        y_ = 0
+        for im_ in ims:
+            self.t1.alpha_composite(im_, ((self.t1.width - im_.width) // 2, y_)); y_ += im_.height - 22
         self.t2 = text_img(self.g("sub", "Lazım olunca bulursun"), font("semi", 40), (210, 212, 216), shadow=True)
         ic = Image.new("RGBA", (120, 150), (0, 0, 0, 0))
         ImageDraw.Draw(ic).polygon([(0, 0), (120, 0), (120, 150), (60, 104), (0, 150)], fill=self.acc + (255,))
@@ -1289,8 +1298,8 @@ class SaveCTA(Base):
         q = back(ramp(t, 0.15, 0.35), 2.0)
         over(out, self.icon, self.W / 2, y - 120 - 60 * (1 - min(1, q)), min(1, ramp(t, 0.15, 0.15)), anchor="c")
         r = ramp(t, 0.3, 0.3)
-        over(out, self.t1, self.W / 2, y + 30 + 30 * (1 - out3(r)), r, anchor="c")
-        over(out, self.t2, self.W / 2, y + 125, ramp(t, 0.5, 0.3), anchor="c")
+        over(out, self.t1, self.W / 2, y + self.t1.height / 2 - 30 + 30 * (1 - out3(r)), r, anchor="c")
+        over(out, self.t2, self.W / 2, y + self.t1.height + 10, ramp(t, 0.5, 0.3), anchor="c")
         return out
 
 

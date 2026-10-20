@@ -150,6 +150,7 @@ Spec: `{"fx": "<ad>", "theme": "petrol|krem", ...}` — koordinatlar çıktı pi
 - **Kart/arayüz** (maskesiz): `ui_world` (sohbet + terminal + çipler), `checklist`, `headline_wall`, `chart_grow`, `lower_third`, `kinetic_captions`, `glass_type`, `screen_wall`, `hook_stack`, `save_cta`.
 - **Kamera/kurgu**: `mirror`, `triptych`, `spotlight`, `cinemascope`, `pull_back_reveal` (`reverse: true` → push-in), `freeze_frame` (video donar, ses akar — konuşmanın durduğu yerde ya da kapanışta), geçişler `zoom_through` ve `whip_pan` (`cut` = segment içindeki kesim anı; segmenti kesimin ±0.4 sn'sini kapsayacak şekilde al).
 - Birleştirme (§6.3): fx mp4'ü base'in o aralığına opak overlay — `[k:v]setpts=PTS-STARTPTS+T/TB` + `overlay=eof_action=pass:enable='between(t,T,T+d)'` (webm değil, `-c:v libvpx-vp9` gerekmez). Zaman `offs.json`'dan (gömülü kelimedeki gibi; EDL zamanı dudak senkronunu kaydırır).
+- **Sınır flaşı:** `--base` kesimi `at + 1/60` sn'den başlar (yoksa önceki range'in son karesi — ör. split paneli — 1 kare görünür). Teslimden önce tek kare sıçrama taraması yap (üst köşe parlaklığı, komşu karelerden >40 fark).
 - Koordinat ayarı: önce `--still` ile kare al (baş/ekran nerede?), `center`/`window`/`box`/`shapes` değerlerini ona göre yaz; doodle/freeze etiketleri `label_xy`.
 - **Doz:** Reels'te konuşmaya bağlı 5-8 fx (20.10 v2 kabul edildi; bant kartları bu sayıya dahil değil), aynı fx bir videoda bir kez (geçişler `whip_pan`/`zoom_through` hariç); YouTube'da bölüm başına ≤2. Anlamlılık kuralı aynen: konuşmada o şey yoksa fx yok. Duygusal/ciddi anda sadece `cinemascope` olabilir.
 - **Marka notu:** `paper_cut` ve `green_screen bg: gun_batimi` eğlenceli/kişisel içerik içindir (BorsaSemih finans videosunda nadiren). `kinetic_captions`/`hook_stack` aralığında normal altyazıyı `captions.ass`'tan o aralık için çıkar (iki yazı üst üste binmesin).
@@ -168,7 +169,7 @@ Hepsi `fx.py spec.json --base edit/base.mp4 --at T --dur D -o edit/fx/x.mp4` ile
 - Demo: `examples/band_demo/` (6 bileşen spec'i).
 
 ### 4f. Altyazı seçeneği B — kelime kutulu (`kcap.py`)
-`python3 kcap.py <edit_dir> -o edit/kcap.mov [--skip a-b,...]` → ortalı, beyaz kalın, söylenen kelime yarı saydam kutuda; alfa katmanı (qtrle mov), final birleştirmede `ass` yerine EN SON `overlay` edilir. split range'lerde panel şeridine koyu mürekkep. `kinetic_captions`/`hook_stack` aralıklarını `--skip` ile çıkar. Semih A (make_ass, sola hizalı) ile B arasında henüz seçim yapmadı (20.10.2026) — seçene kadar planda sor.
+`python3 kcap.py <edit_dir> -o edit/kcap.mov [--skip a-b,...]` → ortalı, beyaz kalın, söylenen kelime yarı saydam kutuda; alfa katmanı (qtrle mov), final birleştirmede `ass` yerine EN SON `overlay` edilir. split range'lerde panel şeridine koyu mürekkep. Boy 56 px (68 fazla büyük bulundu, 20.10; `KCAP_SIZE` ile değişir) — A altyazısıyla aynı görünür boy. `kinetic_captions`/`hook_stack` aralıklarını `--skip` ile çıkar. Semih A (make_ass, sola hizalı) ile B arasında henüz seçim yapmadı (20.10.2026) — seçene kadar planda sor.
 
 ## 5. Ses
 **Ses temizliği varsayılan KAPALI.** Semih yankıyı çekimde engelliyor; sesi orijinal bırak, plana koyma. Sadece açıkça isterse DeepFilterNet tarifi (`docs/ses-temizligi.md` repoda).

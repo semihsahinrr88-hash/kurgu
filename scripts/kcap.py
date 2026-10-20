@@ -15,7 +15,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 _B = Path(__file__).resolve().parent
 PKG = _B if (_B / "fonts").exists() else _B.parent
-F = ImageFont.truetype(str(PKG / "fonts" / "Montserrat-ExtraBold.ttf"), 68)
+SIZE = int(os.environ.get("KCAP_SIZE", 56))  # 20.10: 68 fazla büyük bulundu (Semih) → A altyazısıyla aynı görünür boy
+F = ImageFont.truetype(str(PKG / "fonts" / "Montserrat-ExtraBold.ttf"), SIZE)
 W, H = 1080, 1920
 
 
@@ -76,14 +77,14 @@ def render(words, active, split, y0):
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     txt, pos, nl = layout(words)
     d = ImageDraw.Draw(im)
-    lh = 88
+    lh = int(SIZE * 1.3)
     y_top = (y0 if not split else 640) - (nl - 1) * lh / 2
     if active is not None:
         x, li, ww = pos[active]
         y = y_top + li * lh
         box = (255, 255, 255, 72) if not split else (15, 124, 140, 60)
         ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        ImageDraw.Draw(ov).rounded_rectangle([x - 14, y - 6, x + ww + 14, y + 82], 16, fill=box)
+        ImageDraw.Draw(ov).rounded_rectangle([x - 12, y - 5, x + ww + 12, y + int(SIZE * 1.2)], 14, fill=box)
         im.alpha_composite(ov)
     for i, t in enumerate(txt):
         x, li, ww = pos[i]
@@ -91,7 +92,7 @@ def render(words, active, split, y0):
         if split:
             d.text((x, y), t, font=F, fill=(20, 38, 43))
         else:
-            d.text((x, y), t, font=F, fill=(255, 255, 255), stroke_width=4, stroke_fill=(0, 0, 0))
+            d.text((x, y), t, font=F, fill=(255, 255, 255), stroke_width=3, stroke_fill=(0, 0, 0))
     return im
 
 

@@ -1387,7 +1387,8 @@ def main():
         a.out.parent.mkdir(parents=True, exist_ok=True)
         seg = a.out.with_suffix(".src.mp4")
         if not seg.exists():
-            subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{a.at:.3f}", "-t", f"{a.dur:.3f}", "-i", str(a.base),
+            # +1/60 sn: segment sınırında -ss bir önceki range'in son karesini (ör. split paneli) yakalıyordu → 1 karelik flaş (20.10 düzeltme)
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{a.at + 0.017:.3f}", "-t", f"{a.dur:.3f}", "-i", str(a.base),
                             "-vf", "fps=30", "-c:v", "libx264", "-crf", "12", "-c:a", "aac", "-b:a", "256k", str(seg)], check=True)
     for k in ("image",):  # spec'e göre göreli yollar
         if spec.get(k) and not Path(spec[k]).is_absolute():

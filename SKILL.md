@@ -26,7 +26,7 @@ Repo bu oturumda yoksa önce `add_repo(owner="semihsahinrr88-hash", repo="kurgu"
 |---|---|---|
 | Amaç | ilk 1-3 sn'de durdur, sonuna kadar tut | anlat, öğret, güven ver |
 | Görsel değişim | ~2-4 sn | ~6-12 sn |
-| Layout dağılımı | ~%40 talk, ~%40 split/pip, ~%20 tam ekran | ~%60 talk, ~%30 split/pip, ~%10 tam ekran |
+| Layout dağılımı | çoğunluk talk + baş üstü bandı kartları, birkaç split/prop, 1-3 tam ekran | ~%60 talk, ~%30 split/pip, ~%10 tam ekran |
 | `split` | konuşan altta %55, üst panel | konuşan sağda %50, sol panel |
 | Zoom/punch-in | 30-60 sn'de 4-8 | dakikada ≤2-3, çoğunlukla yavaş `push` |
 | Ses efekti | 30-60 sn'de 4-8 | dakikada ≤2-3, sadece geçişlerde |
@@ -151,7 +151,7 @@ Spec: `{"fx": "<ad>", "theme": "petrol|krem", ...}` — koordinatlar çıktı pi
 - **Kamera/kurgu**: `mirror`, `triptych`, `spotlight`, `cinemascope`, `pull_back_reveal` (`reverse: true` → push-in), `freeze_frame` (video donar, ses akar — konuşmanın durduğu yerde ya da kapanışta), geçişler `zoom_through` ve `whip_pan` (`cut` = segment içindeki kesim anı; segmenti kesimin ±0.4 sn'sini kapsayacak şekilde al).
 - Birleştirme (§6.3): fx mp4'ü base'in o aralığına opak overlay — `[k:v]setpts=PTS-STARTPTS+T/TB` + `overlay=eof_action=pass:enable='between(t,T,T+d)'` (webm değil, `-c:v libvpx-vp9` gerekmez). Zaman `offs.json`'dan (gömülü kelimedeki gibi; EDL zamanı dudak senkronunu kaydırır).
 - Koordinat ayarı: önce `--still` ile kare al (baş/ekran nerede?), `center`/`window`/`box`/`shapes` değerlerini ona göre yaz; doodle/freeze etiketleri `label_xy`.
-- **Doz:** Reels başına en fazla 2-3 fx (kartlarla birlikte §3 yoğunluk sınırı geçerli), aynı fx bir videoda bir kez; YouTube'da bölüm başına ≤1. Anlamlılık kuralı aynen: konuşmada o şey yoksa fx yok. Duygusal/ciddi anda sadece `cinemascope` olabilir.
+- **Doz:** Reels'te konuşmaya bağlı 5-8 fx (20.10 v2 kabul edildi; bant kartları bu sayıya dahil değil), aynı fx bir videoda bir kez (geçişler `whip_pan`/`zoom_through` hariç); YouTube'da bölüm başına ≤2. Anlamlılık kuralı aynen: konuşmada o şey yoksa fx yok. Duygusal/ciddi anda sadece `cinemascope` olabilir.
 - **Marka notu:** `paper_cut` ve `green_screen bg: gun_batimi` eğlenceli/kişisel içerik içindir (BorsaSemih finans videosunda nadiren). `kinetic_captions`/`hook_stack` aralığında normal altyazıyı `captions.ass`'tan o aralık için çıkar (iki yazı üst üste binmesin).
 - Fontlar: Instrument Serif Italic (kapak/manşet/kinetic) ve Caveat (el yazısı notlar) — ikisi de OFL, `fonts/`. Videonun üstünde vurgu `accent_video` (petrol: #35C2D2), kartta `accent`.
 - Demo: `examples/fx_demo/` (24 efektin spec'leri). Yeni efekt gerekirse `fx.py`'ye `@fx("ad", "açıklama")` sınıfı ekle + push.
@@ -212,7 +212,7 @@ Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ik
 
 ## Semih'in kalıcı tercihleri
 - **Onaylı standart (18.10.2026, "6 hata" yeniden kurgusu — "bu şekilde devam edelim"):** hook'ta `proof` kartları · her madde = `split` + `prop` fikir animasyonu (dev turuncu numara + başlık), ardından yüz + zoom/push (split'ler arka arkaya gelmez) · zirve cümlede zoom 1.15 + `impact-bass-1` · donmuş kare + `cta` · render öncesi `storyboard.jpg` onayı. Referans proje: `examples/alti_hata/` (plan.py + compose.py).
-- Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`). **Petrol denemesi (19.10.2026, Semih seçti):** `STUDIO_THEME=petrol` — panel #E9ECEC, metin #14262B, vurgu #0F7C8C (videoda #35C2D2), soluk #8FA0A3; bir sonraki editte test et.
+- Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`). **Petrol (19.10 seçildi, 20.10 'deneme1' ile test edilip beğenildi → yeni standart):** `STUDIO_THEME=petrol` — panel #E9ECEC, metin #14262B, vurgu #0F7C8C (videoda #35C2D2), soluk #8FA0A3; altyazı vurgusu açık petrol; bant kartları koyu petrol #101E22.
 - Altyazı: beyaz Montserrat ExtraBold, normal harf, turuncu anahtar kelimeler, sola hizalı, ~2 satır, alt üçte bir; imza satırı ve "YENİ BÖLÜM" bandı yok.
 - Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Ten F grade, doğal sıcak (§5). Kartlar yüzü kapatmaz.
 - Format modu her editte önce; efekt dozu moda göre; her efektin konuşmada nedeni var — anlamsız edit yok.
@@ -224,4 +224,4 @@ Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ik
 - Planı onaylamadan render yok; onaylarsa sorusuz ilerle. Her şey ücretsiz ve bulutta.
 
 ## Anti-pattern'ler
-Altyazıyı overlay'den önce basmak · lineer easing · doğrulanmamış web fontu (paket fontlarını kullan) · konuşmayla bağı olmayan efekt · glitch/parlama/sallantı · telifli müzik veya görsel · kaynaksız rakam · kesimde sert ses · onaysız edit · transkripti tekrar almak · her sahneyi sıfırdan HTML yazmak (önce `scene.py`) · söyleneni panelde aynen tekrar yazmak (fikri göster: `prop`) · fx vitrini yapmak (bir videoda 3'ten fazla fx, aynı fx iki kez) · bütün videoyu maskelemek (sadece fx segmenti) · kaynak kartına uydurma/özetlenmiş metin koymak (birebir alıntı + url) · şirket logosu kullanmak (hisse kodu yaz) · gömülü kelimeyi birden fazla kullanmak · videonun türünü varsaymak — önce bak, sonra sor, en son edit et.
+Altyazıyı overlay'den önce basmak · lineer easing · doğrulanmamış web fontu (paket fontlarını kullan) · konuşmayla bağı olmayan efekt · glitch/parlama/sallantı · telifli müzik veya görsel · kaynaksız rakam · kesimde sert ses · onaysız edit · transkripti tekrar almak · her sahneyi sıfırdan HTML yazmak (önce `scene.py`) · söyleneni panelde aynen tekrar yazmak (fikri göster: `prop`) · fx vitrini yapmak (konuşmada karşılığı olmayan fx, aynı fx iki kez) · bütün videoyu maskelemek (sadece fx segmenti) · kaynak kartına uydurma/özetlenmiş metin koymak (birebir alıntı + url) · şirket logosu kullanmak (hisse kodu yaz) · gömülü kelimeyi birden fazla kullanmak · videonun türünü varsaymak — önce bak, sonra sor, en son edit et.

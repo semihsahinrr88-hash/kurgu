@@ -1,0 +1,17 @@
+{
+ "fx": "locked_list",
+ "eyebrow": "6 hata · 6 kural",
+ "title": "Para nereye *akacak?*",
+ "items": [
+  "Yönetim",
+  "Para akışı",
+  "Tek hisse",
+  "Kira parası",
+  "Plan"
+ ],
+ "opened": 1,
+ "unlock": 1,
+ "at": 1.0,
+ "y": 105,
+ "theme": "petrol"
+}

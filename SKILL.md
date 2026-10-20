@@ -1,6 +1,6 @@
 ---
 name: "video-studyo"
-description: "Ham video (dikey Reels veya yatay YouTube) verildiğinde BorsaSemih stüdyosuyla (github.com/semihsahinrr88-hash/kurgu) kesim, Türkçe kelime hizalama, layout, turuncu vurgulu altyazı, hazır sahne kütüphanesi, lisanslı ses efektleri, Instagram çıkışı ve kapakla final.mp4 üretme. Ücretsiz."
+description: "Ham video (dikey Reels veya yatay YouTube) verildiğinde BorsaSemih stüdyosuyla (github.com/semihsahinrr88-hash/kurgu) kesim, Türkçe kelime hizalama, baş üstü bandı kartları, altyazı, 22 video efekti, lisanslı ses efektleri, Instagram çıkışı ve kapakla final.mp4 üretme. Ücretsiz."
 ---
 
 # Video Stüdyo v2 (BorsaSemih)
@@ -86,10 +86,19 @@ Her cümleyi etiketle, planda saniye saniye listele. Sahne tipleri `scene.py` ad
 | Sert geçiş, konu değişimi | `fx whip_pan` · ekrana "dalarak" geçiş: `fx zoom_through` |
 | Açılış planı / mekân reveal | `fx pull_back_reveal` (yakından genişe) |
 | Yazılı hook (ilk 3 sn, görsel kanıt yoksa) | `fx hook_stack` |
+| **— Baş üstü bandı (`fx_band.py`, §4e) —** | |
+| Yıl/tarih ("2008 krizinde", "2021'de faiz…") | `fx year` (rakam sayarak gelir + çizgi + etiket) |
+| Maddeli video (6 hata, 5 hisse, 3 sinyal) | `fx locked_list` — hook'ta kilitli liste (açık döngü), her madde başında o maddenin kilidi açılır |
+| Sektör / birden çok hisse | `fx stock_card` (sektör başlığı + hisse kodu kartları + rozet) |
+| Eski↔yeni, ortalama↔bu yıl, enflasyon↔getiri | `fx bars` (gri → petrol çubuk + "4 kat" rozeti) |
+| Videonun zirve karşılaştırması (mevduat vs borsa…) | `fx versus` — TAM EKRAN, videoda en fazla 1 |
+| Haber / KAP / resmi açıklama iddiası | `fx source_card` — Claude kaynağı bulur, metin BİREBİR; bulamazsa kart yok |
 
 **Yoğunluk (Reels; YouTube için §1):** 30-60 sn'de 4-8 punch-in, iki ardışık segment aynı zoomda olmasın. 4-8 ses efekti, her biri bir görsel olaya bağlı. Aynı anda tek kart/B-roll, ≥1.5 sn ekranda, ardışık iki kart arası ≥2 sn. İlk 0.5 sn'ye kart yok. Altyazı her zaman okunur (tam ekran sahnede de en üstte).
 
 **Split'te altyazı (otomatik):** Reels split'inde konuşan alt %55'te olduğu için normal altyazı ağza düşer. `make_ass.py` split range'lerinde altyazıyı panelin alt şeridine (y≈650-850, %86 boy) taşır; `scene.py` panel sahnelerinde alt 220 px'i bu şerit için boş bırakır. Elle bir şey yapma, sadece QA'da kontrol et.
+
+**Varsayılan yerleşim (20.10.2026, Semih onayladı): BAŞ ÜSTÜ BANDI.** Bilgi kartları konuşanın başının üstündeki boş duvarda (Reels y≈115-560) durur, konuşan tam ekranda kalır (referans: oguzhan.guzelkaralar, `docs/referans-oguzhan-2040.md`). `split` + `prop` artık sadece fikri büyük göstermek gereken birkaç anda; tam ekran (`versus`, B-roll) videoda 1-3 kez.
 
 **Layout (EDL range alanı, Yama 3):** `talk` (varsayılan, tam ekran) · `split` (Reels: konuşan alt %55, panel üst 864 px; YouTube: konuşan sağ %50) · `pip` (konuşan sağ altta küçük çerçeve). Layout değişimi kesim noktasında olur; cümle ortasında gerekirse range'i kelime sınırında böl. İlk 3 sn her zaman `talk` + hook altyazısı.
 
@@ -147,6 +156,20 @@ Spec: `{"fx": "<ad>", "theme": "petrol|krem", ...}` — koordinatlar çıktı pi
 - Fontlar: Instrument Serif Italic (kapak/manşet/kinetic) ve Caveat (el yazısı notlar) — ikisi de OFL, `fonts/`. Videonun üstünde vurgu `accent_video` (petrol: #35C2D2), kartta `accent`.
 - Demo: `examples/fx_demo/` (24 efektin spec'leri). Yeni efekt gerekirse `fx.py`'ye `@fx("ad", "açıklama")` sınıfı ekle + push.
 
+### 4e. Baş üstü bandı bileşenleri (`fx_band.py`, fx.py'ye kayıtlı) — 20.10.2026
+Hepsi `fx.py spec.json --base edit/base.mp4 --at T --dur D -o edit/fx/x.mp4` ile (opak segment, §4d birleştirme). Koyu petrol kart (#101E22), vurgu `accent_video` #35C2D2, beyaz metin; `y` ile dikey konum (önce `--still` ile başın üst sınırına bak, kart başa değmesin).
+- `year`: to, from, label, y, size — takvim yaprağı yerine (Semih "1B — sadece yıl"ı seçti; takvim kaba bulundu).
+- `locked_list`: title, eyebrow, items, opened (açık başlayan sayısı), unlock (bu segmentte açılacak index), at — maddeli videoda hook'ta (opened 0, unlock null) + her madde başında 1.5-2.5 sn.
+- `stock_card`: eyebrow, title, tickers [{code, change | note}], badge, at[], badge_at — logo YOK (telif), hisse kodu kartı.
+- `bars`: eyebrow, rows [{label, value, frac, muted}], at[], badge.
+- `versus` (tam ekran): eyebrow, left/right {label, num, value?, icon:'bina'}, unit, stamp, at[], stamp_at.
+- `source_card`: site, eyebrow (tür · tarih), text (kaynaktan BİREBİR), highlight (altı çizilen ifade), circle (daireye alınan), url (planda Semih'e yaz), at. **Uydurma kaynak yok:** WebSearch/WebFetch ile bul, metni aynen al; bulunamazsa kart koyma ve söyle. Birebir ekran görüntüsü istenirse Claude in Chrome ile çekilir (Semih'in Chrome'u açıksa).
+- Rakamlar konuşmadan + kaynaktan; demo/varsayımsal değer kullanılıyorsa Semih'e söyle.
+- Demo: `examples/band_demo/` (6 bileşen spec'i).
+
+### 4f. Altyazı seçeneği B — kelime kutulu (`kcap.py`)
+`python3 kcap.py <edit_dir> -o edit/kcap.mov [--skip a-b,...]` → ortalı, beyaz kalın, söylenen kelime yarı saydam kutuda; alfa katmanı (qtrle mov), final birleştirmede `ass` yerine EN SON `overlay` edilir. split range'lerde panel şeridine koyu mürekkep. `kinetic_captions`/`hook_stack` aralıklarını `--skip` ile çıkar. Semih A (make_ass, sola hizalı) ile B arasında henüz seçim yapmadı (20.10.2026) — seçene kadar planda sor.
+
 ## 5. Ses
 **Ses temizliği varsayılan KAPALI.** Semih yankıyı çekimde engelliyor; sesi orijinal bırak, plana koyma. Sadece açıkça isterse DeepFilterNet tarifi (`docs/ses-temizligi.md` repoda).
 
@@ -195,8 +218,10 @@ Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ik
 - Format modu her editte önce; efekt dozu moda göre; her efektin konuşmada nedeni var — anlamsız edit yok.
 - Uygun an varsa animasyonlu motion graphics (sayaç, mini grafik, ticker/% etiketi, sıralı liste, fikir animasyonu) kullan; statik karta kaçma.
 - (20.10.2026) "22 video efekti" referansındaki tüm efektler stüdyoda (`fx.py`); uygun an geldiğinde kullan, efekt göstermek için efekt koyma.
+- (20.10.2026) "6 hata" petrol denemesi v2 beğenildi ("güzel, tamamdır"): Reels'te konuşmaya bağlı ~8 fx dozu kabul (`examples/deneme1_petrol/`). Semih ilk sürümde (3 fx) "yeni yeteneklerden çok azını kullanmışsın" dedi — anlamlı yer varsa çekinme, ama vitrin yapma.
+- (20.10.2026) Baş üstü bandı varsayılan; yıl için takvim değil `year`; kaynak kartlarını Claude kendisi bulur (gerçek kaynak, birebir metin).
 - Hedef seviye: Tasarımcı Dayı "Bu Videoyu Ben Editlemedim!" — tek tasarım sistemi (frame.md), sürekli değişen layout, kaynaklı bilgi sahneleri.
 - Planı onaylamadan render yok; onaylarsa sorusuz ilerle. Her şey ücretsiz ve bulutta.
 
 ## Anti-pattern'ler
-Altyazıyı overlay'den önce basmak · lineer easing · doğrulanmamış web fontu (paket fontlarını kullan) · konuşmayla bağı olmayan efekt · glitch/parlama/sallantı · telifli müzik veya görsel · kaynaksız rakam · kesimde sert ses · onaysız edit · transkripti tekrar almak · her sahneyi sıfırdan HTML yazmak (önce `scene.py`) · söyleneni panelde aynen tekrar yazmak (fikri göster: `prop`) · fx vitrini yapmak (bir videoda 3'ten fazla fx, aynı fx iki kez) · bütün videoyu maskelemek (sadece fx segmenti) · gömülü kelimeyi birden fazla kullanmak · videonun türünü varsaymak — önce bak, sonra sor, en son edit et.
+Altyazıyı overlay'den önce basmak · lineer easing · doğrulanmamış web fontu (paket fontlarını kullan) · konuşmayla bağı olmayan efekt · glitch/parlama/sallantı · telifli müzik veya görsel · kaynaksız rakam · kesimde sert ses · onaysız edit · transkripti tekrar almak · her sahneyi sıfırdan HTML yazmak (önce `scene.py`) · söyleneni panelde aynen tekrar yazmak (fikri göster: `prop`) · fx vitrini yapmak (bir videoda 3'ten fazla fx, aynı fx iki kez) · bütün videoyu maskelemek (sadece fx segmenti) · kaynak kartına uydurma/özetlenmiş metin koymak (birebir alıntı + url) · şirket logosu kullanmak (hisse kodu yaz) · gömülü kelimeyi birden fazla kullanmak · videonun türünü varsaymak — önce bak, sonra sor, en son edit et.

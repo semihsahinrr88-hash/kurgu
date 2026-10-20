@@ -1,0 +1,21 @@
+{
+ "fx": "stock_card",
+ "eyebrow": "Sektör 01",
+ "title": "Bankacılık",
+ "badge": "F/K ort. 4,2",
+ "tickers": [
+  {
+   "code": "GARAN",
+   "change": "+2,4"
+  },
+  {
+   "code": "AKBNK",
+   "change": "+1,1"
+  },
+  {
+   "code": "YKBNK",
+   "change": "-0,6"
+  }
+ ],
+ "theme": "petrol"
+}

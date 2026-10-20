@@ -1351,6 +1351,21 @@ def run(spec, seg: Path, out: Path, mask: Path | None = None, still: float | Non
     print(f"{spec['fx']}: {n} kare → {out}")
 
 
+def _load_ext():
+    """Bant bileşenleri (fx_band.py) — ayrı dosyada, buraya kaydolur."""
+    try:
+        import importlib
+        importlib.import_module("fx_band")
+        if __name__ == "__main__":
+            import fx as _f
+            REG.update(_f.REG)
+    except Exception as e:  # noqa
+        print("UYARI: fx_band yüklenemedi:", e)
+
+
+_load_ext()
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "list":
         for k, c in REG.items():

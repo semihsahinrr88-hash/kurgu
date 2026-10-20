@@ -1,0 +1,20 @@
+{
+ "fx": "versus",
+ "eyebrow": "Son 5 yıl · 100.000 TL ne oldu?",
+ "left": {
+  "label": "Mevduat",
+  "num": 185,
+  "icon": "bina"
+ },
+ "right": {
+  "label": "Borsa",
+  "num": 640
+ },
+ "stamp": "Borsa > Mevduat",
+ "at": [
+  0.3,
+  0.9
+ ],
+ "stamp_at": 2.2,
+ "theme": "petrol"
+}

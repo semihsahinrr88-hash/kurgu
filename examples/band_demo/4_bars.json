@@ -1,0 +1,23 @@
+{
+ "fx": "bars",
+ "eyebrow": "Yıllık getiri",
+ "badge": "4 kat",
+ "rows": [
+  {
+   "label": "Son 10 yıl ortalama",
+   "value": "%12",
+   "frac": 0.24,
+   "muted": true
+  },
+  {
+   "label": "Bu yıl · BIST 100",
+   "value": "%47",
+   "frac": 0.95
+  }
+ ],
+ "at": [
+  0.3,
+  0.9
+ ],
+ "theme": "petrol"
+}

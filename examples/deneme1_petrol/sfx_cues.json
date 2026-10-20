@@ -32,6 +32,18 @@
   "type": "impact-bass-1"
  },
  {
+  "t": 21.613,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 30.091,
+  "type": "whoosh-short"
+ },
+ {
+  "t": 54.768,
+  "type": "click-soft"
+ },
+ {
   "t": 64.147,
   "type": "tick",
   "db": -6

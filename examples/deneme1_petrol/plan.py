@@ -120,20 +120,27 @@ def fxe(name, spec, i, j=None):
 # zirve cümle: kelime kelime (her kelimenin söylendiği an)
 i = 13; s0 = R[i]["_out"]
 k = lambda w, n=0: round(wt(i, w, n) - s0, 2)
-fxe("fx_zirve", {"fx": "kinetic_captions", "y": 330, "lines": [
-    [{"w": "Eğer", "s": "m", "at": k("eğer")}, {"w": " bunu", "s": "m", "at": k("bunu")}],
+fxe("fx_zirve", {"fx": "kinetic_captions", "y": 370, "lines": [
+    [{"w": "Eğer", "s": "m", "at": k("eğer")}, {"w": "bunu", "s": "m", "at": k("bunu")}],
     [{"w": "planlamazsan", "s": "a", "at": k("planlamazsan")}],
     [{"w": "kaybetmeyi", "s": "s", "at": k("kaybetmeyi")}],
     [{"w": "planlamış olursun", "s": "b", "at": k("planlamış")}]]}, 13)
 # özet: 'bunları' → 6 madde hızla işaretlenir (başın üstündeki bantta, yüzü kapatmadan)
 i = 17; s0 = R[i]["_out"]
-fxe("fx_ozet", {"fx": "checklist", "title": "İşlem açmadan önce", "compact": True, "y": 70, "w": 640,
+fxe("fx_ozet", {"fx": "checklist", "title": "İşlem açmadan önce", "compact": True, "y": 115, "w": 640,
     "items": ["Yönetim kötü günde ne yapıyor?", "Para nereye akıyor?", "Tek hisseye en fazla %10",
               "Kira, taksit, borç parası değil", "Giriş, çıkış, süre yazılı", "Tek piyasa"],
     "at": [round(0.45 + 0.42 * n, 2) for n in range(6)]}, 17)
 
+# v2 (Semih: "yeni yeteneklerden çok azını kullanmışsın") — her biri konuşmadaki bir kelimeye bağlı
+fxe("fx_uzaklas", {"fx": "pull_back_reveal", "point": [540, 760], "zoom": 1.45}, 2)            # "ben oradan UZAKLAŞIYORUM" → kamera ondan uzaklaşır
+fxe("fx_uyari", {"fx": "cinemascope", "keep": 0.52, "center_y": 0.44, "grade": True}, 11)    # "duygularını yönetemezsin, hatalı kararlar" → ciddi uyarı
+fxe("fx_her_piyasa", {"fx": "triptych", "panels": [[540, 820, 1.0], [540, 700, 1.7], [560, 1150, 1.35]]}, 14)  # "her piyasada olmaya çalışma" → bölünmüşlük
+FX.append({"name": "fx_whip_m3", "cut_of": 7, "spec": {"fx": "whip_pan", "cut": 0.25, "theme": "petrol"}})   # 2→3 konu geçişi
+FX.append({"name": "fx_whip_m4", "cut_of": 9, "spec": {"fx": "whip_pan", "cut": 0.25, "dir": "right", "theme": "petrol"}})  # 3→4 konu geçişi
+
 FREEZE = 2.4
-CTA = {"fx": "save_cta", "theme": "petrol", "text": "Bu videoyu *kaydet*", "sub": "İşlem açmadan önce bir daha bak", "y": 560}
+CTA = {"fx": "save_cta", "theme": "petrol", "text": "Bu videoyu\n*kaydet*", "sub": "İşlem açmadan önce bir daha bak", "y": 520}
 
 for name, spec in S.items():
     d = E / "specs"; d.mkdir(exist_ok=True)
@@ -147,6 +154,9 @@ SFX = [{"t": 0.0, "type": "impact-bass-2"}]
 for i in (1, 4, 8, 10, 12, 15):
     SFX.append({"t": round(max(0, R[i]["_out"] - 0.15), 3), "type": "whoosh-short"})
 SFX.append({"t": wt(13, "planlamazsan"), "type": "impact-bass-1"})
+for i in (7, 9):
+    SFX.append({"t": round(R[i]["_out"] - 0.15, 3), "type": "whoosh-short"})
+SFX.append({"t": round(R[14]["_out"] + 0.05, 3), "type": "click-soft"})
 for n in range(6):
     SFX.append({"t": round(R[17]["_out"] + 0.45 + 0.42 * n, 3), "type": "tick", "db": -6})
 json.dump(SFX, open(E / "sfx_cues.json", "w"), indent=1)

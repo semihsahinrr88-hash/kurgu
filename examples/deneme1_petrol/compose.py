@@ -29,13 +29,24 @@ def run(cmd):
 
 
 FXD = E / "fx"; FXD.mkdir(exist_ok=True)
+
+
+def fx_win(f):
+    if "cut_of" in f:  # geçiş: kesimin ±0.25 sn'si
+        return round(offs[f["cut_of"]] - 0.25, 4), 0.5
+    i, j = f["range"]
+    return offs[i], round(nxt(j) - offs[i], 3)
 if len(sys.argv) > 1 and sys.argv[1] == "fx":
+    only = sys.argv[2:]
     for f in meta["fx"]:
-        i, j = f["range"]
-        t0, d = offs[i], round(nxt(j) - offs[i], 3)
+        if only and f["name"] not in only:
+            continue
+        t0, d = fx_win(f)
         print(f["name"], t0, d, flush=True)
         run(["python3", str(ST / "fx.py"), str(E / "specs" / f"{f['name']}.json"), "--base", str(E / "base.mp4"),
              "--at", str(t0), "--dur", str(d), "-o", str(FXD / f"{f['name']}.mp4")])
+    if only:
+        raise SystemExit
     # donmuş kare CTA: son kareyi FZ sn tut, save_cta uygula
     run(["ffmpeg", "-y", "-v", "error", "-sseof", "-0.1", "-i", str(E / "base.mp4"), "-frames:v", "1", "-update", "1", str(FXD / "last.png")])
     run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-t", str(FZ), "-i", str(FXD / "last.png"), "-r", "30",
@@ -46,12 +57,12 @@ if len(sys.argv) > 1 and sys.argv[1] == "fx":
 
 # sahne overlay'leri (EDL zamanı → gerçek zaman)
 OV = []
+for f in meta["fx"]:  # önce opak fx, sahneler ÜSTTE (geçiş penceresi bir panel sahnesine taşarsa sahne kaybolmasın)
+    t0, d = fx_win(f)
+    OV.append((f"fx/{f['name']}.mp4", t0, d, False))
 for s in meta["scenes"]:
     t0 = adj(s["start_in_output"])
     OV.append((s["file"], t0, s["duration"], True))
-for f in meta["fx"]:
-    i, j = f["range"]
-    OV.append((f"fx/{f['name']}.mp4", offs[i], round(nxt(j) - offs[i], 3), False))
 
 cues = json.load(open(E / "sfx_cues.json"))
 for c in cues:

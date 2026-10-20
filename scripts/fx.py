@@ -1241,7 +1241,7 @@ class WhipPan(Base):
         else:
             return img
         M = np.float32([[1, 0, off], [0, 1, 0]])
-        sh = cv2.warpAffine(img, M, (W, H), borderMode=cv2.BORDER_REFLECT)
+        sh = cv2.warpAffine(img, M, (W, H), borderMode=cv2.BORDER_WRAP)
         k = int(9 + 160 * q) | 1
         out = cv2.blur(sh, (k, 1))
         if self.g("streaks", True) and q > 0.2:

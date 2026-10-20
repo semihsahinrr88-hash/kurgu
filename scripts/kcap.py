@@ -1,4 +1,4 @@
-"""Kelime kutulu altyazı (karaoke) — referans: oguzhan.guzelkaralar. ORTALI, beyaz kalın, söylenen kelime yarı saydam kutuda.
+"""STANDART ALTYAZI (20.10.2026 Semih onayladı) — kelime kutulu altyazı (karaoke) — referans: oguzhan.guzelkaralar. ORTALI, beyaz kalın, söylenen kelime yarı saydam kutuda.
 
 make_ass.py'nin (sola hizalı, renkli kelime) alternatifi; çıktı bir ALFA KATMANI (.mov, qtrle) — final birleştirmede
 ass yerine EN SON overlay edilir. Her kelime-durumu tek PNG, ffmpeg concat ile 30 fps'e dökülür (hızlı).
@@ -11,7 +11,7 @@ split layout'lu range'lerde altyazı panel şeridine (y≈690) koyu mürekkeple 
 from __future__ import annotations
 import argparse, json, os, re, subprocess, sys, tempfile
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 _B = Path(__file__).resolve().parent
 PKG = _B if (_B / "fonts").exists() else _B.parent
@@ -82,18 +82,25 @@ def render(words, active, split, y0):
     if active is not None:
         x, li, ww = pos[active]
         y = y_top + li * lh
-        box = (255, 255, 255, 72) if not split else (15, 124, 140, 60)
-        ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        ImageDraw.Draw(ov).rounded_rectangle([x - 12, y - 5, x + ww + 12, y + int(SIZE * 1.2)], 14, fill=box)
-        im.alpha_composite(ov)
+        # 20.10.2026 onaylı stil (referans oguzhan): aktif kelime OPAK açık krem kutu + koyu harf
+        box = (240, 236, 228, 255) if not split else (15, 124, 140, 255)
+        ImageDraw.Draw(im).rounded_rectangle([x - 10, y + 2, x + ww + 10, y + int(SIZE * 1.21)], 12, fill=box)
+    sh = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ds = ImageDraw.Draw(sh)
     for i, t in enumerate(txt):
         x, li, ww = pos[i]
         y = y_top + li * lh
-        if split:
+        if i == active:
+            d.text((x, y), t, font=F, fill=(22, 24, 26) if not split else (255, 255, 255))
+        elif split:
             d.text((x, y), t, font=F, fill=(20, 38, 43))
         else:
-            d.text((x, y), t, font=F, fill=(255, 255, 255), stroke_width=3, stroke_fill=(0, 0, 0))
-    return im
+            ds.text((x + 2, y + 3), t, font=F, fill=(0, 0, 0, 170))  # sert kontur yok, yumuşak gölge
+            d.text((x, y), t, font=F, fill=(255, 255, 255))
+    out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    out.alpha_composite(sh.filter(ImageFilter.GaussianBlur(5)))
+    out.alpha_composite(im)
+    return out
 
 
 def main():
@@ -102,7 +109,7 @@ def main():
     ap.add_argument("-o", type=Path)
     ap.add_argument("--skip", default="", help="altyazı olmayacak aralıklar: 51.5-54.9,63-64")
     ap.add_argument("--words", type=int, default=5)
-    ap.add_argument("--y", type=float, default=1290)
+    ap.add_argument("--y", type=float, default=1240)
     ap.add_argument("--end", type=float, help="toplam süre (varsayılan offs end)")
     a = ap.parse_args()
     E = a.edit_dir

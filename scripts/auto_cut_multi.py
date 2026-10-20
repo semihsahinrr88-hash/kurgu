@@ -33,7 +33,8 @@ def main():
     grade = a.grade
     if a.grade == "bronz":   # onaylı ten (F, 15.10.2026): eski bronz %72 + doğal %28 -> LUT ile
         lut = here / "luts" / "ten_F.cube"
-        grade = BRONZ + (f",lut3d=file={lut}" if lut.exists() else "")
+        lut_g = here / "luts" / "ten_G.cube"   # 20.10.2026 Semih onayı: referans (oguzhan) ten + %10 bronz, F'nin üstüne
+        grade = BRONZ + (f",lut3d=file={lut}" if lut.exists() else "") + (f",lut3d=file={lut_g}" if lut_g.exists() else "")
     tot = sum(r["end"] - r["start"] for r in ranges)
     (a.edit_dir / "edl.json").write_text(json.dumps({"version": 1, "sources": sources, "ranges": ranges, "grade": grade,
                                                      "overlays": [], "total_duration_s": round(tot, 2)}, ensure_ascii=False, indent=1))

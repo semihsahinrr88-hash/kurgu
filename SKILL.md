@@ -30,7 +30,7 @@ Repo bu oturumda yoksa önce `add_repo(owner="semihsahinrr88-hash", repo="kurgu"
 | `split` | konuşan altta %55, üst panel | konuşan sağda %50, sol panel |
 | Zoom/punch-in | 30-60 sn'de 4-8 | dakikada ≤2-3, çoğunlukla yavaş `push` |
 | Ses efekti | 30-60 sn'de 4-8 | dakikada ≤2-3, sadece geçişlerde |
-| Altyazı | `make_ass.py` (sola hizalı, ≤5 kelime) | `make_ass.py --youtube` (alt orta, 54 pt, ≤7 kelime) |
+| Altyazı | `kcap.py` (ortalı, kelime kutulu, ≤5 kelime) | `make_ass.py --youtube` (alt orta, 54 pt, ≤7 kelime) |
 | Hook | ilk 3 sn sert açılış (`impact-bass-2` + push) | ilk 15-30 sn vaat + kısa ön izleme |
 | Bölüm | yok | her ana konu başında 1.5-2 sn `chapter` sahnesi |
 | Kapanış | 2-2.5 sn donmuş kare + `cta` | son 10-20 sn özet (`terminal`/`quote`) + abone çağrısı |
@@ -168,8 +168,8 @@ Hepsi `fx.py spec.json --base edit/base.mp4 --at T --dur D -o edit/fx/x.mp4` ile
 - Rakamlar konuşmadan + kaynaktan; demo/varsayımsal değer kullanılıyorsa Semih'e söyle.
 - Demo: `examples/band_demo/` (6 bileşen spec'i).
 
-### 4f. Altyazı seçeneği B — kelime kutulu (`kcap.py`)
-`python3 kcap.py <edit_dir> -o edit/kcap.mov [--skip a-b,...]` → ortalı, beyaz kalın, söylenen kelime yarı saydam kutuda; alfa katmanı (qtrle mov), final birleştirmede `ass` yerine EN SON `overlay` edilir. split range'lerde panel şeridine koyu mürekkep. Boy 56 px (68 fazla büyük bulundu, 20.10; `KCAP_SIZE` ile değişir) — A altyazısıyla aynı görünür boy. `kinetic_captions`/`hook_stack` aralıklarını `--skip` ile çıkar. Semih A (make_ass, sola hizalı) ile B arasında henüz seçim yapmadı (20.10.2026) — seçene kadar planda sor.
+### 4f. Altyazı — STANDART: kelime kutulu (`kcap.py`, 20.10.2026 Semih onayladı)
+`python3 kcap.py <edit_dir> -o edit/kcap.mov [--skip a-b,...]` → ortalı, iki satır, beyaz Montserrat ExtraBold 56 px, sert kontur yok (yumuşak gölge); söylenen kelime OPAK açık krem kutuda (#F0ECE4) koyu harfle (referans: oguzhan.guzelkaralar). Alfa katmanı (qtrle mov), final birleştirmede EN SON `overlay` edilir (ass yerine). Dikey konum `--y 1240` (göğüs hizası); split range'lerde panel şeridine (kutu petrol, harf beyaz). `kinetic_captions`/`hook_stack` aralıklarını `--skip` ile çıkar. `make_ass.py` (sola hizalı, renkli kelime) artık sadece YouTube için.
 
 ## 5. Ses
 **Ses temizliği varsayılan KAPALI.** Semih yankıyı çekimde engelliyor; sesi orijinal bırak, plana koyma. Sadece açıkça isterse DeepFilterNet tarifi (`docs/ses-temizligi.md` repoda).
@@ -182,7 +182,8 @@ ffmpeg -y -i in.mp4 -stream_loop -1 -i muzik.mp3 -filter_complex "[1:a]volume=-1
 ```
 **Loudness:** iki geçişli loudnorm (`render.apply_loudnorm_two_pass`) → -14 LUFS, ≤ -1 dBTP. Ölçüm -15 altında kalırsa önce `acompressor=threshold=-26dB:ratio=3:attack=5:release=90:makeup=8`.
 
-**Renk — "ten F" (Semih onaylı, 15.10.2026; önceki bronz fazla turuncuydu):** `auto_cut_multi.py --grade bronz` EDL'e şunu yazar: `BRONZ` sabiti + `,lut3d=file=<studio>/luts/ten_F.cube`. LUT = eski bronz görünüm %72 + doğal görünüm %28 (Semih iki görünüm arasında %72'yi seçti). Asıl turunculuk kaynağı: iPhone HLG HDR → render.py'deki `hable desat=0` tonemap ten doygunluğunu ~2 katına çıkarıyor; LUT bunu dengeliyor. Ölçüm (IMG_6603 2. sn yüz): doygunluk ham 0.22 · eski 0.46 · F 0.40; patlak piksel %0.
+**Renk — STANDART "ten G" (20.10.2026 Semih onayladı):** F'nin ÜSTÜNE `luts/ten_G.cube` (auto_cut_multi `--grade bronz` iki LUT'u zincirler). G = referans (oguzhan) ten ölçümüne göre: Lab'da ton sarıdan şeftaliye (-10°), doygunluk ×0,77 (referans eşleşmesi ×0,70 + Semih'in "%10 daha bronz"u), parlak alanlar (alın) bastırılır, ten %3 koyulaşır. Ölçüm (yanak/alın): F → L72 a20 b30 · G → L64 a19 b20 · referans L54 a17 b17. Üretim: `docs/renk/ten_G_uret.py`. Arka plan sıcaklığı referanstaki gibi istenirse çekimde arkaya sıcak lamba (renkle tam gelmez).
+**Eski — "ten F" (15.10.2026; önceki bronz fazla turuncuydu):** `auto_cut_multi.py --grade bronz` EDL'e şunu yazar: `BRONZ` sabiti + `,lut3d=file=<studio>/luts/ten_F.cube`. LUT = eski bronz görünüm %72 + doğal görünüm %28 (Semih iki görünüm arasında %72'yi seçti). Asıl turunculuk kaynağı: iPhone HLG HDR → render.py'deki `hable desat=0` tonemap ten doygunluğunu ~2 katına çıkarıyor; LUT bunu dengeliyor. Ölçüm (IMG_6603 2. sn yüz): doygunluk ham 0.22 · eski 0.46 · F 0.40; patlak piksel %0.
 Grade layout'tan ÖNCE uygulanır (patch_zoom): split/pip paneli tema rengini birebir korur. Yeni ışık/kamerada önce/sonra karesini Semih'e göster; "daha doğal/daha sıcak" isterse LUT karışım oranını değiştir (doğal zincir: `zscale=tin=bt709:t=bt709:pin=bt2020:p=bt709:min=bt2020nc:m=bt709` + `eq=contrast=1.08:saturation=1.05:gamma=0.96`).
 **Split kadraj:** Reels split'te konuşan alt %55; kırpma penceresi `SPLIT_Y=0.55` (0.25 yüzü çok alta itiyordu — Semih: "beni o kadar alta kaydırma").
 
@@ -214,8 +215,9 @@ Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ik
 ## Semih'in kalıcı tercihleri
 - **Onaylı standart (18.10.2026, "6 hata" yeniden kurgusu — "bu şekilde devam edelim"):** hook'ta `proof` kartları · her madde = `split` + `prop` fikir animasyonu (dev turuncu numara + başlık), ardından yüz + zoom/push (split'ler arka arkaya gelmez) · zirve cümlede zoom 1.15 + `impact-bass-1` · donmuş kare + `cta` · render öncesi `storyboard.jpg` onayı. Referans proje: `examples/alti_hata/` (plan.py + compose.py).
 - Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`). **Petrol (19.10 seçildi, 20.10 'deneme1' ile test edilip beğenildi → yeni standart):** `STUDIO_THEME=petrol` — panel #E9ECEC, metin #14262B, vurgu #0F7C8C (videoda #35C2D2), soluk #8FA0A3; altyazı vurgusu açık petrol; bant kartları koyu petrol #101E22.
-- Altyazı: beyaz Montserrat ExtraBold, normal harf, turuncu anahtar kelimeler, sola hizalı, ~2 satır, alt üçte bir; imza satırı ve "YENİ BÖLÜM" bandı yok.
-- Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Ten F grade, doğal sıcak (§5). Kartlar yüzü kapatmaz.
+- Altyazı (20.10.2026 onaylı): ortalı, beyaz ExtraBold 56 px, yumuşak gölge, söylenen kelime açık krem kutuda koyu harf (`kcap.py`); normal harf; imza satırı ve "YENİ BÖLÜM" bandı yok.
+- Ten (20.10.2026 onaylı): "ten G" — referans tonu + %10 bronz, parlamasız (§5).
+- Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Ten G grade (§5). Kartlar yüzü kapatmaz.
 - Format modu her editte önce; efekt dozu moda göre; her efektin konuşmada nedeni var — anlamsız edit yok.
 - Uygun an varsa animasyonlu motion graphics (sayaç, mini grafik, ticker/% etiketi, sıralı liste, fikir animasyonu) kullan; statik karta kaçma.
 - (20.10.2026) "22 video efekti" referansındaki tüm efektler stüdyoda (`fx.py`); uygun an geldiğinde kullan, efekt göstermek için efekt koyma.

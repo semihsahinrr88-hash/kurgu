@@ -1,0 +1,20 @@
+{
+ "fx": "ui_world",
+ "chat": {
+  "title": "Claude",
+  "user": "THYAO grafiğini çiz",
+  "reply": "Hazır, render alıyorum ✓"
+ },
+ "terminal": {
+  "cmd": "python3 render.py",
+  "label": "Render alınıyor"
+ },
+ "chips": {
+  "items": [
+   "Kesim ✓",
+   "Ses ✓",
+   "Altyazı ✓"
+  ]
+ },
+ "theme": "petrol"
+}

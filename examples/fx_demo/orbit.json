@@ -1,0 +1,35 @@
+{
+ "fx": "orbit",
+ "center": [
+  430,
+  520
+ ],
+ "items": [
+  {
+   "n": "1",
+   "text": "THYAO",
+   "sub": "+%3,2"
+  },
+  {
+   "n": "2",
+   "text": "ASELS",
+   "sub": "+%1,8"
+  },
+  {
+   "n": "3",
+   "text": "Altın",
+   "sub": "ons"
+  },
+  {
+   "n": "4",
+   "text": "Dolar",
+   "sub": "TL"
+  },
+  {
+   "n": "5",
+   "text": "BIST",
+   "sub": "100"
+  }
+ ],
+ "theme": "petrol"
+}

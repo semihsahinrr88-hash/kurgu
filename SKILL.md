@@ -1,6 +1,6 @@
 ---
-name: video-studyo
-description: Ham video (dikey Reels veya yatay YouTube) verildiğinde BorsaSemih stüdyosuyla (github.com/semihsahinrr88-hash/kurgu) kesim, Türkçe kelime hizalama, layout, turuncu vurgulu altyazı, hazır sahne kütüphanesi, lisanslı ses efektleri, Instagram çıkışı ve kapakla final.mp4 üretme. Ücretsiz.
+name: "video-studyo"
+description: "Ham video (dikey Reels veya yatay YouTube) verildiğinde BorsaSemih stüdyosuyla (github.com/semihsahinrr88-hash/kurgu) kesim, Türkçe kelime hizalama, layout, turuncu vurgulu altyazı, hazır sahne kütüphanesi, lisanslı ses efektleri, Instagram çıkışı ve kapakla final.mp4 üretme. Ücretsiz."
 ---
 
 # Video Stüdyo v2 (BorsaSemih)
@@ -15,7 +15,7 @@ CA=/root/.ccr/ca-bundle.crt; [ -f $CA ] && export SSL_CERT_FILE=$CA REQUESTS_CA_
 test -d ~/kurgu || git clone --depth 1 https://github.com/semihsahinrr88-hash/kurgu ~/kurgu
 bash ~/kurgu/setup.sh
 ```
-Repo bu oturumda yoksa önce `add_repo(owner="semihsahinrr88-hash", repo="kurgu")`. Kurulum: video-use helper'ları + 3 render.py yaması (normal harf altyazı, webm alfa, zoom/push/layout) + BorsaSemih scriptleri + fontlar + `sfx/` + HyperFrames Chrome ve skill'leri (`talking-head-recut`, `embedded-captions`, `hyperframes-audio`, `media-use`). Hepsi `~/studio/` altında. Yeni bir script/sahne/efekt geliştirirsen repoya commit + push et (bir sonraki oturum da kullanabilsin).
+Repo bu oturumda yoksa önce `add_repo(owner="semihsahinrr88-hash", repo="kurgu", access="push")`. Kurulum: video-use helper'ları + 3 render.py yaması (normal harf altyazı, webm alfa, zoom/push/layout) + BorsaSemih scriptleri + fontlar + `sfx/` + HyperFrames Chrome ve skill'leri (`talking-head-recut`, `embedded-captions`, `hyperframes-audio`, `media-use`). Hepsi `~/studio/` altında. Yeni bir script/sahne/efekt geliştirirsen repoya commit + push et (bir sonraki oturum da kullanabilsin).
 
 **Ham videoyu al:** bağlı klasörden `device_list_dir` → `device_stage_files` (işleme bulutta). Klasör bağlı değilse `device_request_folder_access` iste ya da sohbete eklemesini söyle. Proje: `~/studio/<proje>/`, tüm çıktılar `<proje>/edit/`. Bitince final'i `SendUserFile` ile gönder + `device_commit_files` ile kaynağın yanına `<ad>_final.mp4` yaz.
 
@@ -66,7 +66,26 @@ Her cümleyi etiketle, planda saniye saniye listele. Sahne tipleri `scene.py` ad
 | Grafik/haber/ekran görüntüsü | B-roll (§4b) + `whoosh` |
 | Alıntı / "şu sözü seviyorum" | `quote` |
 | Sonuç / çarpıcı cümle | `zoom: 1.15` + `impact-bass-1` YA DA `chime`; Reels başına en fazla 1 kez **gömülü kelime** (§4c) |
-| Kapanış / CTA | donmuş kare + `cta` + `pop` |
+| Kapanış / CTA | donmuş kare + `cta` + `pop` · "kaydet" çağrısıysa `fx save_cta` |
+| **— Video efektleri (`fx.py`, §4d) —** | |
+| Kendini tanıtma ("ben Semih", ilk video, konuk) | `fx lower_third` |
+| Birden çok hisse/piyasa sayılıyor (THYAO, altın, dolar…) | `fx orbit` (kartlar etrafında döner) |
+| Grafik/ekran görüntüsü üstüne anlatım ("grafiğe bakın") | `fx green_screen` (image = TradingView ss) veya `fx frame_break` |
+| Haber/gelişme ("faiz kararı çıktı", "KAP'a düştü") | `fx headline_wall` (gerçek manşetler, kaynaklı) |
+| Getiri/büyüme rakamı, yıllar içinde artış | `fx chart_grow` (sayaç + sütunlar; `stat`ın güçlü hali) |
+| Kontrol listesi ("almadan önce 4 şeye bakarım") | `fx checklist` (video üstünde; panelde `list`) |
+| Tek kavram/başlık ("Nakit akışı", "Bileşik getiri") | `fx glass_type` |
+| Manifesto/zirve cümlesi, her kelime önemli | `fx kinetic_captions` (o aralıkta altyazı kapalı) |
+| Ciddi/dramatik hikâye (2008, büyük kayıp) | `fx cinemascope` (ses efekti yok) |
+| "Şuraya bakın" — ekranda tek noktaya dikkat | `fx spotlight` |
+| Kanıt/çok kaynak ("yüzlerce mesaj geldi") | `fx screen_wall` (gerçek ekran görüntüleri) |
+| Ekrandaki bir şeyi gösterip açıklama | `fx doodle_boil` (konuşurken) / `fx freeze_frame` (duraklamada) |
+| Yapay zekâ/araç/otomasyon anlatımı | `fx ui_world` |
+| İki taraf ("bir yanda… öbür yanda") / üç seçenek | `fx mirror` / `fx triptych` |
+| Seri/bölüm tanıtımı ("Borsa 101 · 3. bölüm") | `fx cover_story` |
+| Sert geçiş, konu değişimi | `fx whip_pan` · ekrana "dalarak" geçiş: `fx zoom_through` |
+| Açılış planı / mekân reveal | `fx pull_back_reveal` (yakından genişe) |
+| Yazılı hook (ilk 3 sn, görsel kanıt yoksa) | `fx hook_stack` |
 
 **Yoğunluk (Reels; YouTube için §1):** 30-60 sn'de 4-8 punch-in, iki ardışık segment aynı zoomda olmasın. 4-8 ses efekti, her biri bir görsel olaya bağlı. Aynı anda tek kart/B-roll, ≥1.5 sn ekranda, ardışık iki kart arası ≥2 sn. İlk 0.5 sn'ye kart yok. Altyazı her zaman okunur (tam ekran sahnede de en üstte).
 
@@ -110,6 +129,24 @@ En çarpıcı tek kelime/rakam ("%47,5", "Kriz") konuşanın ARKASINDA dev yazı
 4. Birleştir: `[seg][kelime: fade in 0.45/0.3, fade out sonda 0.3, alpha]overlay[a];[a][subj]overlay` → `embed.mp4`; final birleştirmede o aralığa opak overlay. Efekt sesi (`impact-bass-1`) kelimenin belirdiği karede.
 5. QA: kelime okunuyor mu, saç/omuz kenarında titreme var mı. Kenar kötüyse bu efekti bırak — sade daha iyidir. Gelişmiş ihtiyaçta `embedded-captions` skill'ine bak (çekim tek kişilik ve tek planlı olmalı).
 
+### 4d. Video efekt kütüphanesi (`fx.py`) — 22 efekt + 2 kalıp
+Referans: "22 video efekti — Claude ile, sadece kod" Reels'i (20.10.2026, Semih "hepsini ekle, gerekli yerlerde kullanalım" dedi). `scene.py` şeffaf KART üretir; `fx.py` videonun KENDİSİNİ işler (maske, zoom, kağıt kolaj, el çizimi…) ve aralığın yerine geçen **opak mp4** döndürür. Hepsi ücretsiz, CPU (numpy + OpenCV + PIL).
+```bash
+python3 fx.py list                                                                      # efektler + alanlar
+python3 fx.py spec.json --base edit/base.mp4 --at <offs zamanı> --dur 3.2 -o edit/fx/slot_3.mp4
+python3 fx.py spec.json --in edit/fx/slot_3.src.mp4 --still 1.4 -o edit/fx/slot_3.png    # tek kare QA (~5 sn)
+```
+Spec: `{"fx": "<ad>", "theme": "petrol|krem", ...}` — koordinatlar çıktı pikseli (Reels 1080×1920), metinde `*kelime*` = vurgu, büyük harf yok.
+- **Maskeli** (konuşanı ayırır, `remove-background` ~35 sn CPU / 1 sn video, `<seg>.subj.mov` cache): `orbit`, `frame_break`, `green_screen`, `paper_cut`, `cover_story` (başlık konuşanın arkasında), `doodle_boil`. Sadece o segmenti maskele, bütün videoyu değil.
+- **Kart/arayüz** (maskesiz): `ui_world` (sohbet + terminal + çipler), `checklist`, `headline_wall`, `chart_grow`, `lower_third`, `kinetic_captions`, `glass_type`, `screen_wall`, `hook_stack`, `save_cta`.
+- **Kamera/kurgu**: `mirror`, `triptych`, `spotlight`, `cinemascope`, `pull_back_reveal` (`reverse: true` → push-in), `freeze_frame` (video donar, ses akar — konuşmanın durduğu yerde ya da kapanışta), geçişler `zoom_through` ve `whip_pan` (`cut` = segment içindeki kesim anı; segmenti kesimin ±0.4 sn'sini kapsayacak şekilde al).
+- Birleştirme (§6.3): fx mp4'ü base'in o aralığına opak overlay — `[k:v]setpts=PTS-STARTPTS+T/TB` + `overlay=eof_action=pass:enable='between(t,T,T+d)'` (webm değil, `-c:v libvpx-vp9` gerekmez). Zaman `offs.json`'dan (gömülü kelimedeki gibi; EDL zamanı dudak senkronunu kaydırır).
+- Koordinat ayarı: önce `--still` ile kare al (baş/ekran nerede?), `center`/`window`/`box`/`shapes` değerlerini ona göre yaz; doodle/freeze etiketleri `label_xy`.
+- **Doz:** Reels başına en fazla 2-3 fx (kartlarla birlikte §3 yoğunluk sınırı geçerli), aynı fx bir videoda bir kez; YouTube'da bölüm başına ≤1. Anlamlılık kuralı aynen: konuşmada o şey yoksa fx yok. Duygusal/ciddi anda sadece `cinemascope` olabilir.
+- **Marka notu:** `paper_cut` ve `green_screen bg: gun_batimi` eğlenceli/kişisel içerik içindir (BorsaSemih finans videosunda nadiren). `kinetic_captions`/`hook_stack` aralığında normal altyazıyı `captions.ass`'tan o aralık için çıkar (iki yazı üst üste binmesin).
+- Fontlar: Instrument Serif Italic (kapak/manşet/kinetic) ve Caveat (el yazısı notlar) — ikisi de OFL, `fonts/`. Videonun üstünde vurgu `accent_video` (petrol: #35C2D2), kartta `accent`.
+- Demo: `examples/fx_demo/` (24 efektin spec'leri). Yeni efekt gerekirse `fx.py`'ye `@fx("ad", "açıklama")` sınıfı ekle + push.
+
 ## 5. Ses
 **Ses temizliği varsayılan KAPALI.** Semih yankıyı çekimde engelliyor; sesi orijinal bırak, plana koyma. Sadece açıkça isterse DeepFilterNet tarifi (`docs/ses-temizligi.md` repoda).
 
@@ -126,12 +163,12 @@ Grade layout'tan ÖNCE uygulanır (patch_zoom): split/pip paneli tema rengini bi
 **Split kadraj:** Reels split'te konuşan alt %55; kırpma penceresi `SPLIT_Y=0.55` (0.25 yüzü çok alta itiyordu — Semih: "beni o kadar alta kaydırma").
 
 ## 6. Final geçiş (render.py dışı)
-**Hız notu:** iPhone 60 fps HEVC kaynak 2 CPU'lu bulutta yavaş çözülür (72 sn video ≈ 22 dk base render). Bu yüzden base'i (kesim + layout + zoom + grade, overlay'siz) BİR kez render et, sahne/gömülü kelime/CTA/altyazıyı tek ffmpeg birleştirme geçişinde ekle (repoda `examples/reels1/compose.py` örneği: her overlay `setpts=PTS-STARTPTS+T/TB` + `enable=between`, en sonda `ass`). Düzeltme gerekirse sadece birleştirme geçişi tekrarlanır, base değil. **Önizleme tuzağı:** şeffaf webm'de `-ss` girişten önce verilirse kare boş gelir; tek kare kontrolünde `-c:v libvpx-vp9 -i x.webm -ss T` (çıktı tarafı seek) kullan.
+**Hız notu:** iPhone 60 fps HEVC kaynak 2 CPU'lu bulutta yavaş çözülür (72 sn video ≈ 22 dk base render). Bu yüzden base'i (kesim + layout + zoom + grade, overlay'siz) BİR kez render et, sahne/gömülü kelime/CTA/altyazıyı tek ffmpeg birleştirme geçişinde ekle (repoda `examples/alti_hata/compose.py` örneği: her overlay `setpts=PTS-STARTPTS+T/TB` + `enable=between`, en sonda `ass`). Düzeltme gerekirse sadece birleştirme geçişi tekrarlanır, base değil. **Önizleme tuzağı:** şeffaf webm'de `-ss` girişten önce verilirse kare boş gelir; tek kare kontrolünde `-c:v libvpx-vp9 -i x.webm -ss T` (çıktı tarafı seek) kullan.
 1. `python3 render.py edit/edl.json -o edit/stage1.mp4 --no-subtitles --no-loudnorm` (kesim + layout/zoom/push + grade + sahne/B-roll overlay'leri)
 2. Altyazı: önce `master.srt` üret ve metni düzelt (`python3 -c "import sys,json;sys.path.insert(0,'.');import render;from pathlib import Path;E=Path('<proje>/edit');render.build_master_srt(json.load(open(E/'edl.json')),E,E/'master.srt')"`) → hisse kodları, rakam formatı ("1000" → "1.000"), yanlış kelimeler. Düzeltmeleri `edit/transcripts/<ad>.json` kelimelerine de işle, sonra `python3 make_ass.py <proje>/edit --hl "<konuya özel kökler>"` (YouTube `--youtube`). Kare başına 1-2 turuncu kelime; fazlaysa `--hl`'i daralt. Satır sonu `.`/`,` silinir, `?` kalır.
 3. Tek ffmpeg: `[0:v]tpad=stop_mode=clone:stop_duration=2.25` → `cta` webm'i (`-c:v libvpx-vp9 -i`, `setpts=PTS-STARTPTS+T/TB`, `overlay=enable='between(t,T,T+dur)'`) → `ass=edit/captions.ass:fontsdir=/root/studio/fonts` **EN SON**; ses `apad=pad_dur=2.25`; libx264 crf 18 → `stage2.mp4`.
 4. Efektler `sfx.py mix` → `stage3.mp4` (müzik verildiyse ducking).
-5. Loudnorm → `final.mp4` → `export.py` (§2.7) + QA kareleri + ebur128.
+5. Loudnorm → `final.mp4` → `export.py` (§2.7) + QA kareleri + ebur128. Kapak altyazısız kareden yapılır (base.mp4 + hook sahnesinin peek karesi → kısa mp4 → `export.py cover`); başlıkta turuncu her kelime ayrı yıldızlanır (`*6* *hatası*`).
 
 ## 7. Sert kurallar (taviz yok)
 1. Altyazı filtre zincirinde EN SONA. 2. Segment başına extract → kayıpsız concat (render.py). 3. Her kesimde 30 ms ses fade. 4. Overlay'ler `setpts=PTS-STARTPTS+T/TB`. 5. Altyazı zamanları çıktı zaman çizelgesine göre. 6. Kelimenin ortasından asla kesme. 7. Kesim kenarına 30-200 ms pay (varsayılan 50 ms önce / 80 ms sonra). 8. Sadece kelime seviyesinde transkript. 9. Transkripti cache'le. 10. Birden fazla sahne → paralel alt ajanlar. 11. Onaysız kesim yok. 12. Tüm çıktılar `<proje>/edit/` içinde.
@@ -152,13 +189,14 @@ Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ik
 
 ## Semih'in kalıcı tercihleri
 - **Onaylı standart (18.10.2026, "6 hata" yeniden kurgusu — "bu şekilde devam edelim"):** hook'ta `proof` kartları · her madde = `split` + `prop` fikir animasyonu (dev turuncu numara + başlık), ardından yüz + zoom/push (split'ler arka arkaya gelmez) · zirve cümlede zoom 1.15 + `impact-bass-1` · donmuş kare + `cta` · render öncesi `storyboard.jpg` onayı. Referans proje: `examples/alti_hata/` (plan.py + compose.py).
-- Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`).
+- Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`). **Petrol denemesi (19.10.2026, Semih seçti):** `STUDIO_THEME=petrol` — panel #E9ECEC, metin #14262B, vurgu #0F7C8C (videoda #35C2D2), soluk #8FA0A3; bir sonraki editte test et.
 - Altyazı: beyaz Montserrat ExtraBold, normal harf, turuncu anahtar kelimeler, sola hizalı, ~2 satır, alt üçte bir; imza satırı ve "YENİ BÖLÜM" bandı yok.
 - Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Ten F grade, doğal sıcak (§5). Kartlar yüzü kapatmaz.
 - Format modu her editte önce; efekt dozu moda göre; her efektin konuşmada nedeni var — anlamsız edit yok.
-- Uygun an varsa animasyonlu motion graphics (sayaç, mini grafik, ticker/% etiketi, sıralı liste) kullan; statik karta kaçma.
+- Uygun an varsa animasyonlu motion graphics (sayaç, mini grafik, ticker/% etiketi, sıralı liste, fikir animasyonu) kullan; statik karta kaçma.
+- (20.10.2026) "22 video efekti" referansındaki tüm efektler stüdyoda (`fx.py`); uygun an geldiğinde kullan, efekt göstermek için efekt koyma.
 - Hedef seviye: Tasarımcı Dayı "Bu Videoyu Ben Editlemedim!" — tek tasarım sistemi (frame.md), sürekli değişen layout, kaynaklı bilgi sahneleri.
 - Planı onaylamadan render yok; onaylarsa sorusuz ilerle. Her şey ücretsiz ve bulutta.
 
 ## Anti-pattern'ler
-Altyazıyı overlay'den önce basmak · lineer easing · doğrulanmamış web fontu (paket fontlarını kullan) · konuşmayla bağı olmayan efekt · glitch/parlama/sallantı · telifli müzik veya görsel · kaynaksız rakam · kesimde sert ses · onaysız edit · transkripti tekrar almak · her sahneyi sıfırdan HTML yazmak (önce `scene.py`) · gömülü kelimeyi birden fazla kullanmak · videonun türünü varsaymak — önce bak, sonra sor, en son edit et.
+Altyazıyı overlay'den önce basmak · lineer easing · doğrulanmamış web fontu (paket fontlarını kullan) · konuşmayla bağı olmayan efekt · glitch/parlama/sallantı · telifli müzik veya görsel · kaynaksız rakam · kesimde sert ses · onaysız edit · transkripti tekrar almak · her sahneyi sıfırdan HTML yazmak (önce `scene.py`) · söyleneni panelde aynen tekrar yazmak (fikri göster: `prop`) · fx vitrini yapmak (bir videoda 3'ten fazla fx, aynı fx iki kez) · bütün videoyu maskelemek (sadece fx segmenti) · gömülü kelimeyi birden fazla kullanmak · videonun türünü varsaymak — önce bak, sonra sor, en son edit et.

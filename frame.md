@@ -128,6 +128,13 @@ sistemi, sürekli değişen yerleşim, kaynaklı bilgi sahneleri.
 - Kaynaksız rakam. Telifli görsel/müzik.
 - İki bağımsız bilgiyi aynı anda göstermek.
 
+## Efekt fontları (sadece fx.py)
+
+- **Instrument Serif Italic** (OFL) — editoryal ton: dergi kapağı başlığı, gazete manşeti, kinetic_captions'ta ince kelime.
+- **Caveat** (OFL) — el yazısı: doodle_boil / freeze_frame notları ("bu benim", "grafik burada").
+- Videonun ÜSTÜNDE vurgu rengi `accent_video` (petrol temada açık camgöbeği #35C2D2; koyu #0F7C8C videoda kaybolur),
+  kart/kağıt üstünde `accent`.
+
 ## Hareket dili
 
 - Giriş 0.30–0.45 sn, `power3.out`; metin soldan 24px kayarak + opaklık. Çıkış daha hızlı (0.25–0.35 sn, `power2.in`).

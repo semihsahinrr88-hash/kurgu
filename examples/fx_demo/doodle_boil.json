@@ -1,0 +1,46 @@
+{
+ "fx": "doodle_boil",
+ "shapes": [
+  {
+   "type": "rect",
+   "box": [
+    560,
+    300,
+    460,
+    330
+   ],
+   "label": "ekran",
+   "label_xy": [
+    800,
+    200
+   ]
+  },
+  {
+   "type": "ellipse",
+   "box": [
+    880,
+    760,
+    120,
+    150
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "from": [
+    330,
+    170
+   ],
+   "to": [
+    200,
+    320
+   ],
+   "label": "ben",
+   "label_xy": [
+    330,
+    80
+   ]
+  }
+ ],
+ "theme": "petrol"
+}

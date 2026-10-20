@@ -1,0 +1,9 @@
+{
+ "fx": "pull_back_reveal",
+ "point": [
+  160,
+  430
+ ],
+ "dur_in": 1.6,
+ "theme": "petrol"
+}

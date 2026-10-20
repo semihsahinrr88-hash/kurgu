@@ -1,0 +1,9 @@
+{
+ "fx": "chart_grow",
+ "value": 47.5,
+ "decimals": 1,
+ "prefix": "%",
+ "label": "yıllık getiri",
+ "land": 1.6,
+ "theme": "petrol"
+}

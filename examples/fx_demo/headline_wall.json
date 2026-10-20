@@ -1,0 +1,26 @@
+{
+ "fx": "headline_wall",
+ "items": [
+  {
+   "cat": "Gündem",
+   "date": "20.10.2026",
+   "text": "Merkez Bankası faizi sabit tuttu"
+  },
+  {
+   "cat": "Borsa",
+   "date": "20.10.2026",
+   "text": "BIST 100 rekor tazeledi"
+  },
+  {
+   "cat": "Son dakika",
+   "date": "20.10.2026",
+   "text": "Bankacılık endeksi %4 yükseldi"
+  }
+ ],
+ "at": [
+  0.2,
+  0.7,
+  1.2
+ ],
+ "theme": "petrol"
+}

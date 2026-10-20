@@ -1,0 +1,17 @@
+{
+ "fx": "checklist",
+ "title": "Alım öncesi kontrol",
+ "items": [
+  "Trend yukarı",
+  "Hacim artıyor",
+  "Stop belli",
+  "Risk %2"
+ ],
+ "at": [
+  0.4,
+  0.8,
+  1.2,
+  1.6
+ ],
+ "theme": "petrol"
+}

@@ -13,7 +13,7 @@ test -d video-use || git clone -q --depth 1 https://github.com/browser-use/video
 cp video-use/helpers/*.py "$ST/"
 
 echo "2/6 python paketleri"
-pip install -q --break-system-packages faster-whisper librosa matplotlib pillow numpy fonttools 2>&1 | grep -v -i warning || true
+pip install -q --break-system-packages faster-whisper librosa matplotlib pillow numpy fonttools opencv-python-headless 2>&1 | grep -v -i warning || true
 ( pip install -q --break-system-packages whisperx >/tmp/whisperx_install.log 2>&1 && echo "whisperx hazır" >>/tmp/whisperx_install.log ) &
 WX=$!
 
@@ -47,7 +47,8 @@ npx --yes hyperframes browser ensure >/dev/null 2>&1 || echo "UYARI: hyperframes
 npx --yes hyperframes skills update talking-head-recut embedded-captions >/dev/null 2>&1 || echo "UYARI: hyperframes skills update başarısız"
 
 echo "6/6 kontrol"
-python3 -m py_compile transcribe_local.py auto_cut.py auto_cut_multi.py frame_offsets.py retime_words.py align_words.py make_ass.py sfx.py scene.py export.py
+python3 -m py_compile transcribe_local.py auto_cut.py auto_cut_multi.py frame_offsets.py retime_words.py align_words.py make_ass.py sfx.py scene.py export.py fx.py
+python3 fx.py list | grep -c '^•' | xargs -I{} echo "fx: {} efekt"
 grep -c SUB_UPPER render.py >/dev/null && grep -q 'r.get("layout"' render.py && grep -q libvpx-vp9 render.py
 ls "$ST/sfx/"*.wav | wc -l | xargs -I{} echo "sfx: {} efekt"
 ffprobe -version | head -1

@@ -1,0 +1,35 @@
+{
+ "fx": "freeze_frame",
+ "at": 0.3,
+ "shapes": [
+  {
+   "type": "ellipse",
+   "box": [
+    0,
+    250,
+    220,
+    380
+   ],
+   "label": "bu benim",
+   "label_xy": [
+    260,
+    180
+   ]
+  },
+  {
+   "type": "ellipse",
+   "box": [
+    600,
+    760,
+    300,
+    170
+   ],
+   "label": "grafik burada",
+   "label_xy": [
+    520,
+    1050
+   ]
+  }
+ ],
+ "theme": "petrol"
+}

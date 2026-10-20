@@ -40,9 +40,14 @@ PKG = _B if (_B / "fonts").exists() else _B.parent   # ~/studio/ veya paket kök
 THEMES = {
     # krem (varsayılan, 15.10.2026): konuşanın kazak/duvar tonundan; panel videoyla tek parça görünür.
     "krem": dict(bg="#EFE8DB", card="rgba(239,232,219,0.95)", card_solid="#E6DDCC", stripe="#FF8C1E",
-                 accent="#FF8C1E", accent_ink="#D9670A", up="#1E9E5A", down="#D9434A", text="#221E1B",
+                 accent="#FF8C1E", accent_ink="#D9670A", accent_video="#FF8C1E", up="#1E9E5A", down="#D9434A", text="#221E1B",
                  muted="#6F6458", dim="#9A8E80", hair="#CFC4B3", grid="transparent", scrim="rgba(0,0,0,0.55)",
                  track="rgba(34,30,27,0.10)", shadow="0 18px 44px rgba(40,30,20,.22)", light=True),
+    # petrol (19.10.2026, Semih seçti — krem+turuncu yerine finans kimliği, test aşamasında): STUDIO_THEME=petrol
+    "petrol": dict(bg="#E9ECEC", card="rgba(233,236,236,0.95)", card_solid="#DDE3E3", stripe="#0F7C8C",
+                   accent="#0F7C8C", accent_ink="#0F7C8C", accent_video="#35C2D2", up="#1E9E5A", down="#D9434A", text="#14262B",
+                   muted="#8FA0A3", dim="#8FA0A3", hair="#C9D3D4", grid="transparent", scrim="rgba(0,0,0,0.55)",
+                   track="rgba(20,38,43,0.10)", shadow="0 18px 44px rgba(10,30,35,.20)", light=True),
     # lacivert (eski): STUDIO_THEME=lacivert ya da spec "theme": "lacivert"
     "lacivert": dict(bg="#08142D", card="rgba(8,20,45,0.92)", card_solid="#0E1F42", stripe="#2F80FF",
                      accent="#FF8C1E", accent_ink="#FF8C1E", up="#2BD47D", down="#FF5A5F", text="#FFFFFF",

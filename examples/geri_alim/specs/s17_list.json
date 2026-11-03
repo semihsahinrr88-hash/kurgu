@@ -1,0 +1,17 @@
+{
+ "type": "list",
+ "format": "reels",
+ "region": "band",
+ "theme": "petrol",
+ "title": "Aynı geri alım, *iki mesaj*",
+ "items": [
+  "Kâr eden · kendi kasasından",
+  "Zarar eden · borçla"
+ ],
+ "at": [
+  0.1,
+  1.25
+ ],
+ "duration": 5.1,
+ "start": 72.5
+}

@@ -1,0 +1,28 @@
+{
+ "fx": "bars",
+ "eyebrow": "Türkiye Sigorta · TL",
+ "rows": [
+  {
+   "label": "Yeni program · üst sınır (3 yıl)",
+   "value": "4 milyar",
+   "frac": 0.9,
+   "muted": true
+  },
+  {
+   "label": "Önceki program · harcanan (3,5 yıl)",
+   "value": "303 milyon",
+   "frac": 0.07
+  }
+ ],
+ "at": [
+  1.2,
+  6.1
+ ],
+ "badge": "Açıklanan ≠ harcanan",
+ "badge_at": 6.9,
+ "theme": "petrol",
+ "win": [
+  47.58,
+  7.92
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "type": "stat",
+ "format": "reels",
+ "region": "band",
+ "theme": "petrol",
+ "value": 2.46,
+ "decimals": 2,
+ "label": "toplam geri alım",
+ "eyebrow": "12-16 Ekim",
+ "source": "Ekotürk, 19.10.2026",
+ "duration": 2.0,
+ "land": 0.5,
+ "start": 14.09,
+ "unit": "milyar TL"
+}

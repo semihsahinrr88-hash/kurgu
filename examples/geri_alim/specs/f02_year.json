@@ -1,0 +1,12 @@
+{
+ "fx": "year",
+ "to": 2008,
+ "from": 2004,
+ "label": "BIST 100 · en sert ay",
+ "y": 150,
+ "theme": "petrol",
+ "win": [
+  5.09,
+  2.09
+ ]
+}

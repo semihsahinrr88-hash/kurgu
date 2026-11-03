@@ -1,0 +1,17 @@
+{
+ "type": "prop",
+ "prop": "alici",
+ "format": "reels",
+ "region": "panel",
+ "theme": "petrol",
+ "step": "2/2",
+ "title": "Fiyatı *tutuyor*",
+ "label": "Şirket alıyor",
+ "sell": "Panik satış",
+ "land": 4.6,
+ "duration": 5.42,
+ "win": [
+  32.51,
+  5.42
+ ]
+}

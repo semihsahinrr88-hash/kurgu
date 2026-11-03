@@ -1,0 +1,35 @@
+{
+ "fx": "bars",
+ "eyebrow": "BIST 100 · en sert aylar",
+ "rows": [
+  {
+   "label": "Ekim 2008",
+   "value": "%-22,8",
+   "frac": 0.92,
+   "muted": true
+  },
+  {
+   "label": "Mart 2020",
+   "value": "%-15,4",
+   "frac": 0.62,
+   "muted": true
+  },
+  {
+   "label": "Eylül 2026",
+   "value": "%-16,65",
+   "frac": 0.67
+  }
+ ],
+ "at": [
+  0.15,
+  0.35,
+  0.5
+ ],
+ "badge": "Herkes kaçtı",
+ "badge_at": 2.3,
+ "theme": "petrol",
+ "win": [
+  7.18,
+  2.86
+ ]
+}

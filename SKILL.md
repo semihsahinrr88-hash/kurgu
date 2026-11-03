@@ -19,6 +19,21 @@ Repo bu oturumda yoksa önce `add_repo(owner="semihsahinrr88-hash", repo="kurgu"
 
 **Ham videoyu al:** bağlı klasörden `device_list_dir` → `device_stage_files` (işleme bulutta). Klasör bağlı değilse `device_request_folder_access` iste ya da sohbete eklemesini söyle. Proje: `~/studio/<proje>/`, tüm çıktılar `<proje>/edit/`. Bitince final'i `SendUserFile` ile gönder + `device_commit_files` ile kaynağın yanına `<ad>_final.mp4` yaz.
 
+## 0b. STANDART KONTROL LİSTESİ (her Reels'te, render'dan önce tek tek işaretle — 04.11.2026)
+Bu dosya (repodaki SKILL.md) tek doğru kaynak. Hesaptaki skill kopyası bununla çelişirse BU dosya geçerli.
+03.11'deki #2 kurgusunda eski kopyaya bakılıp aşağıdakilerin yarısı atlandı; Semih yakaladı. Planla birlikte bu listeyi de gönder.
+- [ ] **Altyazı `kcap.py`** (ortalı, kelime kutulu — §4f). `make_ass.py` SADECE YouTube.
+- [ ] **Diş beyazlatma + netlik** (`teeth_video.py`, §5b) — base render'dan hemen sonra; önce `--still` karesini göster.
+- [ ] **Ten:** "ten G" (§5). Semih "yüzümle oynama / ışığı ben ayarladım" derse grade boş (sadece HDR→SDR tonemap).
+- [ ] **Storyboard** (`storyboard.jpg` ya da QA kare sayfası) render'dan ÖNCE gönderildi.
+- [ ] **fx dozu:** konuşmaya bağlı 5-8 video efekti (bant kartları sayılmaz). 2-3 tanesiyle teslim etme.
+- [ ] **Geçiş:** her konu değişiminde (soru köprüsü, "ama", "ben…") `whip_pan` / `zoom_through` + `whoosh-short`.
+- [ ] **Maddeler:** her madde `split` + `prop` fikir animasyonu (dev numara + başlık) → ardından yüz + zoom. Sadece liste kartı yetmez. Base yeniden render gerekmez: `examples/geri_alim/compose.py` split'i birleştirmede kurar (`SPLIT_Y0≈690`, baş panel kenarına değmesin, yüz çok alta düşmesin).
+- [ ] **Gömülü kelime** (§4c): Reels başına 1 (hook cevabı ya da zirve).
+- [ ] Hook yazısı · kaynak kartları gerçek ve birebir · donmuş kare CTA + "yatırım tavsiyesi değildir" · -14 LUFS.
+- [ ] Kapak `STUDIO_THEME=petrol` ile (yoksa turuncu çıkar).
+Referans uygulama (hepsi bir arada): `examples/geri_alim/` (compose.py + specs, 04.11.2026).
+
 ## 1. Format modu ve denge (ÖNCE BUNU BELİRLE)
 `ffprobe` ile yön + süre → planın ilk satırı. Bütün kararlar bu moda göre.
 
@@ -113,7 +128,7 @@ Tipler ve alanlar (ortak: `format` reels|youtube, `region` band|panel|full, `dur
 - `compare`: old, new, note — `ticker`: code, price, change ("+3,2") — `question`: text
 - `list`: title, items, at[] — `timeline`: title, points[{label,text}], at[] — `chapter`: index, title — `quote`: text, who — `cta`: text, sub — `terminal`: lines[], at[] (yazılarak gelen "$" satırları, kapanış dersi)
 - `prop` (fikir animasyonu, `props.py`): bir cümlenin FİKRİNİ küçük animasyonla anlatır. Alanlar: prop, title (`*kelime*`), step ("3/6" → solda turuncu numara), at[], land. Hazır prop'lar:
-  `kasa` (sermaye 10 dilim, %10'luk dilim batar, %90 yerinde — at:[doldur, bat]) · `yasak_para` (Kira/Taksit/Borç kartları borsa kutusundan geri itilir) · `plan_formu` (giriş/çıkış/miktar/süre satırları dolar + `stamp`) · `para_akisi` (Mevduat/Altın/Borsa/Döviz arasında para akar, land'de `target`'a toplanır) · `risk` (kadran ibresi `value` 0-1) · `odak` (piyasa çipleri, land'de `pick` seçilir) · `yonetim` (iyi gün balonları / kötü gün sessizlik).
+  `kasa` (sermaye 10 dilim, %10'luk dilim batar, %90 yerinde — at:[doldur, bat]) · `yasak_para` (Kira/Taksit/Borç kartları borsa kutusundan geri itilir) · `plan_formu` (giriş/çıkış/miktar/süre satırları dolar + `stamp`) · `para_akisi` (Mevduat/Altın/Borsa/Döviz arasında para akar, land'de `target`'a toplanır) · `risk` (kadran ibresi `value` 0-1) · `odak` (piyasa çipleri, land'de `pick` seçilir) · `yonetim` (iyi gün balonları / kötü gün sessizlik) · `alici` (panik satışta fiyat düşer, "Şirket alıyor" bloğu girip fiyatı tutar — label, sell, land; 04.11).
   Yeni bir fikir sık tekrar ediyorsa props.py'ye yeni prop olarak ekle + push. Prop da anlamlılık kuralına tabi: konuşmada o fikir yoksa girmez.
 - `proof` (kanıtlı hook): items `[{"img":"grafik.png"}]` (gerçek ekran görüntüsü — tercih) veya `[{"n":"1","text":"Yönetim"}]` (maddeli videoda ön izleme); kartlar ilk 1-1.5 sn'de yelpaze gibi dizilir. `region: band`. İlk 3 sn kuralı: hook'ta tek izinli kart budur, 0.15 sn'den başlayabilir.
 - Hızlı QA: `python3 peek.py <sahne_klasörü> --at 1.2 2.5 --bg kare.jpg [--split]` (hyperframes render'ı beklemeden kare) · `--mp4 x.mp4` kısa önizleme.
@@ -192,10 +207,13 @@ ffmpeg -y -i in.mp4 -stream_loop -1 -i muzik.mp3 -filter_complex "[1:a]volume=-1
 Grade layout'tan ÖNCE uygulanır (patch_zoom): split/pip paneli tema rengini birebir korur. Yeni ışık/kamerada önce/sonra karesini Semih'e göster; "daha doğal/daha sıcak" isterse LUT karışım oranını değiştir (doğal zincir: `zscale=tin=bt709:t=bt709:pin=bt2020:p=bt709:min=bt2020nc:m=bt709` + `eq=contrast=1.08:saturation=1.05:gamma=0.96`).
 **Split kadraj:** Reels split'te konuşan alt %55; kırpma penceresi `SPLIT_Y=0.55` (0.25 yüzü çok alta itiyordu — Semih: "beni o kadar alta kaydırma").
 
+### 5b. Diş beyazlatma + görüntü kalitesi — STANDART (03.11.2026 Semih istedi, 04.11 standart yaptı)
+`python3 teeth_video.py edit/base.mp4 edit/base_t.mp4` → her karede mediapipe ağız-içi maskesi, sadece dişlerdeki sarılık alınır (Lab b* −%55, L +%10, güç 0.9); dudak/dil/diş eti değişmez. Aynı geçişte `hqdn3d=1.2:1.0:3:3` + `unsharp=5:5:0.55` (hafif gürültü temizliği + netlik). Ten rengine dokunmaz. Sonraki her şey (fx, split, gömülü kelime, donmuş kare) `base_t.mp4`'ten. Önce `python3 teeth_video.py --still <video> <sn> qa.jpg` ile önce/sonra karesi gönder; "fazla" derse `--strength 0.6`. Model: `~/studio/models/face_landmarker.task` (setup indirir). 84 sn / 60 fps ≈ 12 dk.
+
 ## 6. Final geçiş (render.py dışı)
 **Hız notu:** iPhone 60 fps HEVC kaynak 2 CPU'lu bulutta yavaş çözülür (72 sn video ≈ 22 dk base render). Bu yüzden base'i (kesim + layout + zoom + grade, overlay'siz) BİR kez render et, sahne/gömülü kelime/CTA/altyazıyı tek ffmpeg birleştirme geçişinde ekle (repoda `examples/alti_hata/compose.py` örneği: her overlay `setpts=PTS-STARTPTS+T/TB` + `enable=between`, en sonda `ass`). Düzeltme gerekirse sadece birleştirme geçişi tekrarlanır, base değil. **Önizleme tuzağı:** şeffaf webm'de `-ss` girişten önce verilirse kare boş gelir; tek kare kontrolünde `-c:v libvpx-vp9 -i x.webm -ss T` (çıktı tarafı seek) kullan.
 1. `python3 render.py edit/edl.json -o edit/stage1.mp4 --no-subtitles --no-loudnorm` (kesim + layout/zoom/push + grade + sahne/B-roll overlay'leri)
-2. Altyazı: önce `master.srt` üret ve metni düzelt (`python3 -c "import sys,json;sys.path.insert(0,'.');import render;from pathlib import Path;E=Path('<proje>/edit');render.build_master_srt(json.load(open(E/'edl.json')),E,E/'master.srt')"`) → hisse kodları, rakam formatı ("1000" → "1.000"), yanlış kelimeler. Düzeltmeleri `edit/transcripts/<ad>.json` kelimelerine de işle, sonra `python3 make_ass.py <proje>/edit --hl "<konuya özel kökler>"` (YouTube `--youtube`). Kare başına 1-2 turuncu kelime; fazlaysa `--hl`'i daralt. Satır sonu `.`/`,` silinir, `?` kalır.
+2. Altyazı: önce `master.srt` üret ve metni düzelt (`python3 -c "import sys,json;sys.path.insert(0,'.');import render;from pathlib import Path;E=Path('<proje>/edit');render.build_master_srt(json.load(open(E/'edl.json')),E,E/'master.srt')"`) → hisse kodları, rakam formatı ("1000" → "1.000"), yanlış kelimeler. Düzeltmeleri `edit/transcripts/<ad>.json` kelimelerine de işle, sonra Reels: `python3 kcap.py <proje>/edit -o edit/kcap.mov --skip <hook/kinetic aralıkları>` (STANDART, §4f; birleştirmede EN SON overlay). YouTube: `python3 make_ass.py <proje>/edit --youtube --hl "<kökler>"`.
 3. Tek ffmpeg: `[0:v]tpad=stop_mode=clone:stop_duration=2.25` → `cta` webm'i (`-c:v libvpx-vp9 -i`, `setpts=PTS-STARTPTS+T/TB`, `overlay=enable='between(t,T,T+dur)'`) → `ass=edit/captions.ass:fontsdir=/root/studio/fonts` **EN SON**; ses `apad=pad_dur=2.25`; libx264 crf 18 → `stage2.mp4`.
 4. Efektler `sfx.py mix` → `stage3.mp4` (müzik verildiyse ducking).
 5. Loudnorm → `final.mp4` → `export.py` (§2.7) + QA kareleri + ebur128. Kapak altyazısız kareden yapılır (base.mp4 + hook sahnesinin peek karesi → kısa mp4 → `export.py cover`); başlıkta turuncu her kelime ayrı yıldızlanır (`*6* *hatası*`).
@@ -221,7 +239,8 @@ Kaynak adı = dosyanın uzantısız adı. `zoom` 1.08-1.18, `push` 0.03-0.06; ik
 - **Onaylı standart (18.10.2026, "6 hata" yeniden kurgusu — "bu şekilde devam edelim"):** hook'ta `proof` kartları · her madde = `split` + `prop` fikir animasyonu (dev turuncu numara + başlık), ardından yüz + zoom/push (split'ler arka arkaya gelmez) · zirve cümlede zoom 1.15 + `impact-bass-1` · donmuş kare + `cta` · render öncesi `storyboard.jpg` onayı. Referans proje: `examples/alti_hata/` (plan.py + compose.py).
 - Tema: **krem** (15.10.2026) — split/pip paneli ve kartlar krem #EFE8DB, koyu metin, dev turuncu madde numarası, panel videoya degradeyle erir; split altyazısı panelde koyu. Lacivert artık kullanılmıyor (gerekirse `STUDIO_THEME=lacivert`). **Petrol (19.10 seçildi, 20.10 'deneme1' ile test edilip beğenildi → yeni standart):** `STUDIO_THEME=petrol` — panel #E9ECEC, metin #14262B, vurgu #0F7C8C (videoda #35C2D2), soluk #8FA0A3; altyazı vurgusu açık petrol; bant kartları koyu petrol #101E22.
 - Altyazı (20.10.2026 onaylı): ortalı, beyaz ExtraBold 56 px, yumuşak gölge, söylenen kelime açık krem kutuda koyu harf (`kcap.py`); normal harf; imza satırı ve "YENİ BÖLÜM" bandı yok.
-- Ten (20.10.2026 onaylı): "ten G" — referans tonu + %10 bronz, parlamasız (§5).
+- Ten (20.10.2026 onaylı): "ten G" — referans tonu + %10 bronz, parlamasız (§5). Semih ışığı kendisi ayarlayıp "yüzümle oynama" derse grade yok (03.11).
+- (03.11.2026) Diş beyazlatma + netleştirme her videoda standart (§5b).
 - Tamamı büyük harf yok (altyazı + kartlar + kapak). Ses orijinal — yankı temizliği yok (açıkça istemedikçe). Ten G grade (§5). Kartlar yüzü kapatmaz.
 - Format modu her editte önce; efekt dozu moda göre; her efektin konuşmada nedeni var — anlamsız edit yok.
 - Uygun an varsa animasyonlu motion graphics (sayaç, mini grafik, ticker/% etiketi, sıralı liste, fikir animasyonu) kullan; statik karta kaçma.

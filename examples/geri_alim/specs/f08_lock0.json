@@ -1,0 +1,18 @@
+{
+ "fx": "locked_list",
+ "eyebrow": "2 sebep",
+ "title": "Neden kendi hissesini *alır?*",
+ "items": [
+  "Ucuz buluyor",
+  "Fiyatı tutuyor"
+ ],
+ "opened": 0,
+ "unlock": null,
+ "at": 0.3,
+ "y": 115,
+ "theme": "petrol",
+ "win": [
+  25.85,
+  1.08
+ ]
+}

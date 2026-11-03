@@ -310,7 +310,30 @@ def p_yonetim(spec, C):
     return svg, js
 
 
-PROPS = dict(kasa=p_kasa, yasak_para=p_yasak_para, plan_formu=p_plan_formu, para_akisi=p_para_akisi,
+def p_alici(spec, C):
+    """Panik satışında fiyat düşer, şirket tahtada alıcı olarak girer ve fiyatı tutar.
+    Alanlar: label ('Şirket alıyor'), sell ('Panik satış'), land (alıcının girdiği sn)."""
+    land = float(spec.get("land", 1.6))
+    label = html.escape(spec.get("label", "Şirket alıyor")); sell = html.escape(spec.get("sell", "Panik satış"))
+    # fiyat yolu: sert düşüş -> destek çizgisinde yatay
+    pts = [(40, 70), (150, 110), (230, 95), (330, 190), (420, 170), (520, 290), (600, 300), (700, 296), (800, 302), (880, 298)]
+    d = "M" + " L".join(f"{x} {y}" for x, y in pts)
+    L = 1400
+    svg = (f'<line id="sup" x1="40" y1="330" x2="880" y2="330" stroke="{C["accent"]}" stroke-width="6" stroke-dasharray="6 12" opacity="0"/>'
+           f'<path id="pl" d="{d}" fill="none" stroke="{C["down"]}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" '
+           f'stroke-dasharray="{L}" stroke-dashoffset="{L}"/>'
+           f'<g id="sl" opacity="0">{_txt(330, 60, sell, C, size=34, weight=800, fill=C["down"])}</g>'
+           f'<g id="buy" opacity="0"><rect x="520" y="345" width="360" height="86" rx="43" fill="{C["accent"]}"/>'
+           f'{_txt(700, 389, label, C, size=36, weight=800, fill="#FFFFFF")}</g>')
+    js = (f"tl.to('#sl',{{opacity:1,duration:0.3}},0.25);"
+          f"tl.to('#pl',{{strokeDashoffset:{L*0.45:.0f},duration:{max(0.5, land-0.4):.2f},ease:'power1.in'}},0.3);"
+          f"tl.to('#sup',{{opacity:1,duration:0.25}},{land-0.15:.3f});"
+          f"tl.fromTo('#buy',{{opacity:0,y:30}},{{opacity:1,y:0,duration:0.35,ease:'back.out(2)'}},{land:.3f});"
+          f"tl.to('#pl',{{strokeDashoffset:0,stroke:'{C['accent']}',duration:1.2,ease:'power1.out'}},{land+0.1:.3f});")
+    return svg, js
+
+
+PROPS = dict(alici=p_alici, kasa=p_kasa, yasak_para=p_yasak_para, plan_formu=p_plan_formu, para_akisi=p_para_akisi,
              risk=p_risk, odak=p_odak, yonetim=p_yonetim)
 
 

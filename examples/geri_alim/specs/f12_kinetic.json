@@ -1,0 +1,37 @@
+{
+ "fx": "kinetic_captions",
+ "y": 360,
+ "lines": [
+  [
+   {
+    "w": "Açıklanan",
+    "s": "b",
+    "at": 0.63
+   },
+   {
+    "w": "para",
+    "s": "b",
+    "at": 1.21
+   }
+  ],
+  [
+   {
+    "w": "harcanan para",
+    "s": "a",
+    "at": 1.45
+   }
+  ],
+  [
+   {
+    "w": "demek değil",
+    "s": "s",
+    "at": 2.13
+   }
+  ]
+ ],
+ "theme": "petrol",
+ "win": [
+  44.62,
+  2.96
+ ]
+}

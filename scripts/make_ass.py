@@ -8,6 +8,7 @@ Otomatik turuncu: rakam/yüzde/para içeren kelimeler + 3-6 harfli BÜYÜK hisse
 Çıktıyı render sonrası  -vf "ass=captions.ass:fontsdir=<fonts>"  ile EN SONA bas.
 """
 from __future__ import annotations
+import sys
 import argparse, json, re, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -44,6 +45,8 @@ def main():
     ap.add_argument("--youtube", action="store_true", help="yatay 1920x1080: alt orta, tek-iki satır, daha küçük")
     ap.add_argument("-o", type=Path)
     a = ap.parse_args()
+    if not a.youtube:
+        print("UYARI: Reels altyazı STANDARDI kcap.py (ortalı, kelime kutulu). make_ass sola hizalı stil — STANDART DEĞİL, sadece YouTube.", file=sys.stderr)
     if a.youtube:
         PX, PY, al, ml, mr = 1920, 1080, 2, 160, 160
         if a.size == 74: a.size = 54

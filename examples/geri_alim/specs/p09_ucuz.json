@@ -1,0 +1,28 @@
+{
+ "type": "prop",
+ "prop": "para_akisi",
+ "format": "reels",
+ "region": "panel",
+ "theme": "petrol",
+ "step": "1/2",
+ "title": "Fiyatı *ucuz* buluyor",
+ "items": [
+  "Kasa",
+  "Mevduat",
+  "Yatırım",
+  "Hissesi"
+ ],
+ "target": "Hissesi",
+ "at": [
+  0.5,
+  0.8,
+  1.1,
+  1.4
+ ],
+ "land": 4.45,
+ "duration": 5.58,
+ "win": [
+  26.93,
+  5.58
+ ]
+}

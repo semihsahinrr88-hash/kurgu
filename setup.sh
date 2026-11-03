@@ -13,7 +13,7 @@ test -d video-use || git clone -q --depth 1 https://github.com/browser-use/video
 cp video-use/helpers/*.py "$ST/"
 
 echo "2/6 python paketleri"
-pip install -q --break-system-packages faster-whisper librosa matplotlib pillow numpy fonttools opencv-python-headless 2>&1 | grep -v -i warning || true
+pip install -q --break-system-packages faster-whisper librosa matplotlib pillow numpy fonttools opencv-python-headless mediapipe 2>&1 | grep -v -i warning || true
 ( pip install -q --break-system-packages whisperx >/tmp/whisperx_install.log 2>&1 && echo "whisperx hazır" >>/tmp/whisperx_install.log ) &
 WX=$!
 
@@ -23,6 +23,8 @@ cp "$PKG"/scripts/*.py "$ST/"
 mkdir -p "$ST/fonts" && cp "$PKG"/fonts/*.ttf "$ST/fonts/"
 mkdir -p "$ST/luts" && cp "$PKG"/luts/*.cube "$ST/luts/"   # ten LUT (F tonu)
 ln -sfn "$PKG/sfx" "$ST/sfx"
+mkdir -p "$ST/models"; test -s "$ST/models/face_landmarker.task" || curl -sSL -o "$ST/models/face_landmarker.task" https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task || echo "UYARI: diş beyazlatma modeli indirilemedi"
+cp "$PKG/SKILL.md" "$ST/SKILL.md"   # TEK DOĞRU KAYNAK: kurgudan önce bunu oku (hesaptaki skill kopyası eski olabilir)
 cp "$PKG/frame.md" "$ST/frame.md"; mkdir -p "$ST/templates" && cp "$PKG"/templates/* "$ST/templates/"
 
 echo "4/6 render.py yamaları"
@@ -47,11 +49,12 @@ npx --yes hyperframes browser ensure >/dev/null 2>&1 || echo "UYARI: hyperframes
 npx --yes hyperframes skills update talking-head-recut embedded-captions >/dev/null 2>&1 || echo "UYARI: hyperframes skills update başarısız"
 
 echo "6/6 kontrol"
-python3 -m py_compile transcribe_local.py auto_cut.py auto_cut_multi.py frame_offsets.py retime_words.py align_words.py make_ass.py sfx.py scene.py export.py fx.py fx_band.py kcap.py
+python3 -m py_compile transcribe_local.py auto_cut.py auto_cut_multi.py frame_offsets.py retime_words.py align_words.py make_ass.py sfx.py scene.py export.py fx.py fx_band.py kcap.py teeth.py teeth_video.py
+python3 -c "import mediapipe" && test -s models/face_landmarker.task && echo "diş beyazlatma: hazır"
 python3 fx.py list | grep -c '^•' | xargs -I{} echo "fx: {} efekt"
 grep -c SUB_UPPER render.py >/dev/null && grep -q 'r.get("layout"' render.py && grep -q libvpx-vp9 render.py
 ls "$ST/sfx/"*.wav | wc -l | xargs -I{} echo "sfx: {} efekt"
 ffprobe -version | head -1
 wait $WX || true; tail -1 /tmp/whisperx_install.log
 python3 -c "import nltk, nltk.pathsec as p; p.ALLOW_PROXIED_FETCH=True; nltk.download('punkt_tab', quiet=True)" >/dev/null 2>&1 || echo "UYARI: nltk punkt_tab indirilemedi (align_words için gerekli)"
-echo "HAZIR: ~/studio"
+echo "HAZIR: ~/studio — kurguya başlamadan ÖNCE ~/studio/SKILL.md oku (standart kontrol listesi §0b)"

@@ -1,0 +1,21 @@
+{
+ "fx": "checklist",
+ "title": "Geri alıma bakarken",
+ "items": [
+  "Kasadan mı, borçla mı?",
+  "Açıklama mı, gerçek alım mı?"
+ ],
+ "at": [
+  2.63,
+  4.68
+ ],
+ "compact": true,
+ "y": 130,
+ "theme": "petrol",
+ "win": [
+  60.1,
+  8.78
+ ],
+ "x": 70,
+ "w": 940
+}

@@ -22,7 +22,8 @@ Repo bu oturumda yoksa önce `add_repo(owner="semihsahinrr88-hash", repo="kurgu"
 ## 0b. STANDART KONTROL LİSTESİ (her Reels'te, render'dan önce tek tek işaretle — 04.11.2026)
 Bu dosya (repodaki SKILL.md) tek doğru kaynak. Hesaptaki skill kopyası bununla çelişirse BU dosya geçerli.
 03.11'deki #2 kurgusunda eski kopyaya bakılıp aşağıdakilerin yarısı atlandı; Semih yakaladı. Planla birlikte bu listeyi de gönder.
-- [ ] **Altyazı `kcap.py`** (ortalı, kelime kutulu — §4f). `make_ass.py` SADECE YouTube.
+- [ ] **Altyazı `kcap.py`** (ortalı, kelime kutulu — §4f). `make_ass.py` SADECE YouTube. kcap yüzü takip eder: her karede yazı çenenin en az 45 px altına iner (varsayılan `edit/base_t.mp4`'ten ölçer; kapatmak için `--no-face`). QA'da yazının yüze/ağza binmediğini kontrol et.
+- [ ] **Kesilen kelime yok:** auto_cut'ın attığı "Hmm/ııı" gibi kısa sesleri senaryoyla karşılaştır. Klip sonundaki tek kelime (ör. sonraki klibin "Eğer"i) Whisper'da filler görünebilir; sonraki klibin başında o kelime SESSİZ ama transkriptte varsa Whisper uydurmuştur, kelimeyi önceki klibin sonundan geri al (`silencedetect` ile doğrula). 03.11'de "Eğer" böyle kesildi.
 - [ ] **Diş beyazlatma + netlik** (`teeth_video.py`, §5b) — base render'dan hemen sonra; önce `--still` karesini göster.
 - [ ] **Ten:** "ten G" (§5). Semih "yüzümle oynama / ışığı ben ayarladım" derse grade boş (sadece HDR→SDR tonemap).
 - [ ] **Storyboard** (`storyboard.jpg` ya da QA kare sayfası) render'dan ÖNCE gönderildi.

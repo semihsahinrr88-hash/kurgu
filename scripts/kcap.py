@@ -111,6 +111,9 @@ def main():
     ap.add_argument("--words", type=int, default=5)
     ap.add_argument("--y", type=float, default=1240)
     ap.add_argument("--end", type=float, help="toplam süre (varsayılan offs end)")
+    ap.add_argument("--face", type=Path, help="yüz takibi için video (varsayılan edit/base_t.mp4 ya da base.mp4). Altyazı çenenin altına iner, yüze binmez")
+    ap.add_argument("--no-face", action="store_true", help="yüz takibini kapat, sabit --y kullan")
+    ap.add_argument("--y-max", type=float, default=1540, help="altyazının inebileceği en alt merkez (Instagram alt arayüzünün üstü)")
     a = ap.parse_args()
     E = a.edit_dir
     out = a.o or E / "kcap.mov"
@@ -121,6 +124,28 @@ def main():
     Image.new("RGBA", (W, H), (0, 0, 0, 0)).save(tmp / "empty.png")
     seq, t = [], 0.0
     CH = chunks(ws, a.words)
+    # 04.11.2026 (Semih: "yazı suratımın ortasında, kalıcı olarak hallet"): her altyazı karesi için çene konumu ölçülür,
+    # yazının ÜST kenarı çenenin en az 45 px altında kalır. Yüz bulunamazsa sabit --y.
+    fv = None if a.no_face else (a.face or next((E / n for n in ("base_t.mp4", "base.mp4") if (E / n).exists()), None))
+    ys = {}
+    if fv is not None:
+        import cv2, sys as _s
+        _s.path.insert(0, str(_B))
+        import teeth
+        det = teeth.make_detector(); cap = cv2.VideoCapture(str(fv)); lh = int(SIZE * 1.3)
+        for ci, ch in enumerate(CH):
+            if ch[0]["split"]:
+                continue
+            chins = []
+            for tt in (ch[0]["s"], (ch[0]["s"] + ch[-1]["e"]) / 2, ch[-1]["e"]):
+                cap.set(cv2.CAP_PROP_POS_MSEC, tt * 1000); ok, fr = cap.read()
+                lm = teeth.landmarks(det, fr) if ok else None
+                if lm is not None:
+                    chins.append(lm[152][1])
+            if chins:
+                nl = layout(ch)[2]
+                ys[ci] = min(a.y_max, max(a.y, max(chins) + 45 + (nl - 1) * lh / 2))
+        print(f"yüz takibi: {len(ys)}/{len(CH)} karede altyazı çene altına alındı ({fv.name})")
     for ci, ch in enumerate(CH):
         c0 = ch[0]["s"]
         c1 = CH[ci + 1][0]["s"] if ci + 1 < len(CH) else min(end, ch[-1]["e"] + 0.4)
@@ -132,7 +157,7 @@ def main():
             if e - s <= 0.001:
                 continue
             fn = f"c{ci:04d}_{k:02d}.png"
-            render(ch, k, ch[0]["split"], a.y).save(tmp / fn)
+            render(ch, k, ch[0]["split"], ys.get(ci, a.y)).save(tmp / fn)
             seq.append((fn, e - t)); t = e
     if end > t:
         seq.append(("empty.png", end - t))

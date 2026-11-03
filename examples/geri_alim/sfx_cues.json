@@ -1,12 +1,8 @@
 [
  {
   "t": 0.05,
-  "type": "impact-bass-2"
- },
- {
-  "t": 2.78,
-  "type": "impact-bass-1",
-  "db": -4
+  "type": "impact-bass-2",
+  "db": -8
  },
  {
   "t": 7.6,

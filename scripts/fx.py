@@ -1386,10 +1386,19 @@ def main():
     if a.base:
         a.out.parent.mkdir(parents=True, exist_ok=True)
         seg = a.out.with_suffix(".src.mp4")
+        # 04.11.2026: önbellek anahtarı (base + at + dur). Eskiden sadece dosya varlığına bakılıyordu; pencere kaydırılınca
+        # eski kesit kullanılıp görüntü sesten 0,3 sn kaydı (Semih yakaladı). Anahtar tutmazsa kesit yeniden alınır.
+        key = f"{Path(a.base).resolve()}|{Path(a.base).stat().st_mtime:.0f}|{a.at:.3f}|{a.dur:.3f}"
+        kf = seg.with_suffix(".key")
+        if seg.exists() and (not kf.exists() or kf.read_text() != key):
+            seg.unlink()
+            for old in seg.parent.glob(seg.stem + ".subj*"):
+                old.unlink()
         if not seg.exists():
             # +1/60 sn: segment sınırında -ss bir önceki range'in son karesini (ör. split paneli) yakalıyordu → 1 karelik flaş (20.10 düzeltme)
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{a.at + 0.017:.3f}", "-t", f"{a.dur:.3f}", "-i", str(a.base),
                             "-vf", "fps=30", "-c:v", "libx264", "-crf", "12", "-c:a", "aac", "-b:a", "256k", str(seg)], check=True)
+            kf.write_text(key)
     for k in ("image",):  # spec'e göre göreli yollar
         if spec.get(k) and not Path(spec[k]).is_absolute():
             spec[k] = str(a.spec.parent / spec[k])
